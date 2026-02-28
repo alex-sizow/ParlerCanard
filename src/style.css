@@ -185,23 +185,81 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes bounce-in {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .animate-pulse-recording {
   animation: pulse-recording 1.5s ease-in-out infinite;
 }
 
-/* ─── Route Transitions ─── */
-.tab-fade-enter-active,
-.tab-fade-leave-active {
-  transition: opacity 0.2s ease;
+/* Staggered animation utility: use with --stagger-index CSS variable */
+.animate-stagger {
+  animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--stagger-index, 0) * 60ms);
 }
 
-.tab-fade-enter-from,
+/* ─── Route Transitions ─── */
+.tab-fade-enter-active {
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tab-fade-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tab-fade-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
 .tab-fade-leave-to {
   opacity: 0;
+  transform: translateY(-4px);
 }
 
 /* ─── Vant Overrides ─── */
@@ -218,6 +276,65 @@ body {
   font-weight: 700 !important;
   font-size: 20px !important;
   color: var(--color-text) !important;
+}
+
+/* Toast / Notification: ensure text is visible */
+.van-toast {
+  max-width: 80vw !important;
+  word-break: break-word !important;
+  padding: 12px 24px !important;
+  font-family: var(--font-primary) !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+
+.van-toast--text {
+  min-width: 120px !important;
+  background: rgba(0, 0, 0, 0.82) !important;
+  color: #fff !important;
+}
+
+.van-toast--success,
+.van-toast--fail {
+  min-width: 120px !important;
+  background: rgba(0, 0, 0, 0.82) !important;
+  color: #fff !important;
+}
+
+.van-toast .van-toast__text {
+  color: #fff !important;
+  font-size: 15px !important;
+  max-width: 70vw !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+}
+
+/* Popup animation enhancement */
+.van-popup--bottom {
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1) !important;
+}
+
+.van-popup {
+  transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.32, 0.72, 0, 1) !important;
+}
+
+.van-overlay {
+  transition: opacity 0.35s ease !important;
+}
+
+.van-popup__close-icon {
+  transition: transform 0.2s ease, opacity 0.2s ease !important;
+  z-index: 10;
+}
+
+.van-popup__close-icon:active {
+  transform: scale(0.85) !important;
+}
+
+/* Practice popup: fixed height, no resize */
+.practice-popup-shell.van-popup--bottom {
+  display: flex;
+  flex-direction: column;
 }
 
 /* ─── Duck Tabbar Top Wave ─── */

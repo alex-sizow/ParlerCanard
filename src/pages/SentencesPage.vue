@@ -36,35 +36,40 @@ const {
     <div class="sentences-page__list">
       <EmptyState v-if="filteredSentences.length === 0" description="No sentences match this difficulty level" />
 
-      <div v-for="sentence in filteredSentences" :key="sentence.id"
-        class="sentence-card surface-card-elevated animate-fade-in"
-        :class="{ 'sentence-card--completed': isSentenceCompleted(sentence.id) }" @click="selectItem(sentence)">
-        <div class="sentence-card__header">
-          <van-tag :type="difficultyColors[sentence.difficulty]" round size="medium">
-            {{ sentence.difficulty }}
-          </van-tag>
-          <van-icon v-if="isSentenceCompleted(sentence.id)" name="checked" color="var(--color-success)" size="20" />
-        </div>
+      <transition-group name="card-list" tag="div" class="sentences-page__cards">
+        <div v-for="(sentence, idx) in filteredSentences" :key="sentence.id"
+          class="sentence-card surface-card-elevated animate-stagger"
+          :class="{ 'sentence-card--completed': isSentenceCompleted(sentence.id) }" :style="{ '--stagger-index': idx }"
+          @click="selectItem(sentence)">
+          <div class="sentence-card__header">
+            <van-tag :type="difficultyColors[sentence.difficulty]" round size="medium">
+              {{ sentence.difficulty }}
+            </van-tag>
+            <transition name="check-pop">
+              <van-icon v-if="isSentenceCompleted(sentence.id)" name="checked" color="var(--color-success)" size="20" />
+            </transition>
+          </div>
 
-        <p class="sentence-card__text text-h3">
-          {{ sentence.text }}
-        </p>
-        <p class="sentence-card__ipa text-phonetic">
-          {{ sentence.ipa }}
-        </p>
-        <p class="sentence-card__translation text-caption">
-          {{ sentence.translation }}
-        </p>
+          <p class="sentence-card__text text-h3">
+            {{ sentence.text }}
+          </p>
+          <p class="sentence-card__ipa text-phonetic">
+            {{ sentence.ipa }}
+          </p>
+          <p class="sentence-card__translation text-caption">
+            {{ sentence.translation }}
+          </p>
 
-        <div class="sentence-card__actions">
-          <van-button type="primary" size="small" round icon="volume-o" @click.stop="listenTo(sentence.text)">
-            Listen
-          </van-button>
-          <van-button type="default" size="small" round icon="audio" @click.stop="selectItem(sentence)">
-            Practice
-          </van-button>
+          <div class="sentence-card__actions">
+            <van-button type="primary" size="small" round icon="volume-o" @click.stop="listenTo(sentence.text)">
+              Listen
+            </van-button>
+            <van-button type="default" size="small" round icon="audio" @click.stop="selectItem(sentence)">
+              Practice
+            </van-button>
+          </div>
         </div>
-      </div>
+      </transition-group>
     </div>
   </div>
 
@@ -73,7 +78,7 @@ const {
     :fluency-score="fluencyScore" :is-recording="isRecording" :is-processing="isProcessing" :is-supported="isSupported"
     :recorded-blob="recordedBlob" :media-stream="mediaStream" :analyser-node="analyserNode" :transcript="transcript"
     :is-playing="isPlaying" :is-speaking="isSpeaking" :is-model-loading="isModelLoading"
-    :model-load-progress="modelLoadProgress" listen-label="Listen Full Sentence" max-height="90vh"
+    :model-load-progress="modelLoadProgress" listen-label="Listen Full Sentence" max-height="92vh"
     @close="closePractice" @listen="activeItem && listenTo(activeItem.text)" @record="handleRecord"
     @play-recording="playRecording" @stop-playback="stopPlayback">
     <template v-if="activeItem" #extra>
@@ -100,19 +105,26 @@ const {
 }
 
 .sentences-page__list {
+  margin-top: var(--space-md);
+}
+
+.sentences-page__cards {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  margin-top: var(--space-md);
 }
 
 .sentence-card {
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease,
+    border-color 0.3s ease;
+  will-change: transform;
 }
 
 .sentence-card:active {
-  transform: scale(0.98);
+  transform: scale(0.975);
+  box-shadow: var(--shadow-sm);
 }
 
 .sentence-card--completed {
@@ -145,6 +157,43 @@ const {
   gap: var(--space-sm);
 }
 
+/* Card list transitions */
+.card-list-enter-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-list-leave-active {
+  transition: all 0.3s ease;
+}
+
+.card-list-enter-from {
+  opacity: 0;
+  transform: translateY(20px) scale(0.96);
+}
+
+.card-list-leave-to {
+  opacity: 0;
+  transform: translateX(-100%) scale(0.9);
+}
+
+.card-list-move {
+  transition: transform 0.35s ease;
+}
+
+/* Check icon pop animation */
+.check-pop-enter-active {
+  animation: bounce-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.check-pop-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.check-pop-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
 .phrases-section {
   width: 100%;
   display: flex;
@@ -158,11 +207,13 @@ const {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .phrase-item:active {
   background: var(--color-lavender-light);
+  transform: scale(0.97);
 }
 
 .phrase-item__top {

@@ -62,7 +62,8 @@ const categoryColors: Record<string, string> = {
 
     <!-- Phoneme Grid -->
     <div class="phonemes-page__grid">
-      <div v-for="phoneme in filteredPhonemes" :key="phoneme.symbol" class="phoneme-tile surface-card animate-fade-in"
+      <div v-for="(phoneme, idx) in filteredPhonemes" :key="phoneme.symbol"
+        class="phoneme-tile surface-card animate-stagger" :style="{ '--stagger-index': idx }"
         @click="selectPhoneme(phoneme)">
         <span class="phoneme-tile__symbol" :style="{ color: categoryColors[phoneme.category] ?? 'var(--color-text)' }">
           {{ phoneme.symbol }}
@@ -147,12 +148,15 @@ const categoryColors: Record<string, string> = {
   gap: var(--space-xs);
   padding: var(--space-md) var(--space-sm);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
   text-align: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .phoneme-tile:active {
-  transform: scale(0.95);
+  transform: scale(0.9);
+  box-shadow: var(--shadow-sm);
 }
 
 .phoneme-tile__symbol {

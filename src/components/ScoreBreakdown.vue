@@ -22,13 +22,15 @@ function barColor(value: number): string {
 
 <template>
 <div class="score-breakdown surface-card">
-  <div v-for="item in items" :key="item.key" class="score-breakdown__row">
+  <div v-for="(item, idx) in items" :key="item.key" class="score-breakdown__row animate-stagger"
+    :style="{ '--stagger-index': idx }">
     <span class="score-breakdown__icon">{{ item.icon }}</span>
     <span class="score-breakdown__label text-caption">{{ item.label }}</span>
     <div class="score-breakdown__bar-track">
       <div class="score-breakdown__bar-fill" :style="{
         width: `${$props[item.key]}%`,
         backgroundColor: barColor($props[item.key]),
+        transitionDelay: `${idx * 100}ms`,
       }" />
     </div>
     <span class="score-breakdown__value text-caption">{{ $props[item.key] }}%</span>
@@ -74,7 +76,7 @@ function barColor(value: number): string {
 .score-breakdown__bar-fill {
   height: 100%;
   border-radius: 4px;
-  transition: width 0.6s ease-out;
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .score-breakdown__value {

@@ -38,21 +38,29 @@ const emit = defineEmits<{
   background: var(--color-white);
   color: var(--color-text);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: var(--font-primary);
   font-size: 11px;
   font-weight: 500;
   box-shadow: var(--shadow-md);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .record-btn:active:not(.record-btn--disabled) {
-  transform: scale(0.95);
+  transform: scale(0.88);
+  box-shadow: var(--shadow-sm);
 }
 
 .record-btn--recording {
   border-color: var(--color-accent);
   color: var(--color-accent);
   animation: pulse-recording 1.5s ease-in-out infinite;
+  transform: scale(1.05);
+}
+
+.record-btn--recording:active {
+  transform: scale(0.95) !important;
 }
 
 .record-btn--processing {

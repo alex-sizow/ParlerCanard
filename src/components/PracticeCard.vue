@@ -7,13 +7,15 @@ const emit = defineEmits<{ listen: []; record: []; select: [] }>()
 </script>
 
 <template>
-<div class="practice-card surface-card-elevated animate-fade-in" :class="{ 'practice-card--learned': props.isLearned }"
+<div class="practice-card surface-card-elevated" :class="{ 'practice-card--learned': props.isLearned }"
   @click="emit('select')">
   <div class="practice-card__header">
     <van-tag :type="(difficultyColors[props.item.difficulty] as 'success' | 'warning' | 'danger')" round size="medium">
       {{ props.item.difficulty }}
     </van-tag>
-    <van-icon v-if="props.isLearned" name="checked" color="var(--color-success)" size="20" />
+    <transition name="check-pop">
+      <van-icon v-if="props.isLearned" name="checked" color="var(--color-success)" size="20" />
+    </transition>
   </div>
 
   <h2 class="practice-card__text text-h2">
@@ -42,11 +44,15 @@ const emit = defineEmits<{ listen: []; record: []; select: [] }>()
 <style scoped>
 .practice-card {
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease,
+    border-color 0.3s ease;
+  will-change: transform;
 }
 
 .practice-card:active {
-  transform: scale(0.98);
+  transform: scale(0.975);
+  box-shadow: var(--shadow-sm);
 }
 
 .practice-card--learned {
@@ -77,5 +83,19 @@ const emit = defineEmits<{ listen: []; record: []; select: [] }>()
 .practice-card__actions {
   display: flex;
   gap: var(--space-sm);
+}
+
+/* Check icon pop animation */
+.check-pop-enter-active {
+  animation: bounce-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.check-pop-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.check-pop-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
 }
 </style>

@@ -43,8 +43,11 @@ const {
 
     <div class="words-page__list">
       <EmptyState v-if="filteredWords.length === 0" description="No words match this difficulty level" />
-      <PracticeCard v-for="word in filteredWords" :key="word.id" :item="word" :is-learned="isWordLearned(word.id)"
-        @listen="listenTo(word.text)" @record="selectItem(word)" @select="selectItem(word)" />
+      <transition-group name="card-list" tag="div" class="words-page__cards">
+        <PracticeCard v-for="(word, idx) in filteredWords" :key="word.id" :item="word"
+          :is-learned="isWordLearned(word.id)" class="animate-stagger" :style="{ '--stagger-index': idx }"
+          @listen="listenTo(word.text)" @record="selectItem(word)" @select="selectItem(word)" />
+      </transition-group>
     </div>
   </div>
 
@@ -72,9 +75,35 @@ const {
 }
 
 .words-page__list {
+  margin-top: var(--space-md);
+}
+
+.words-page__cards {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  margin-top: var(--space-md);
+}
+
+/* Card list transitions */
+.card-list-enter-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-list-leave-active {
+  transition: all 0.3s ease;
+}
+
+.card-list-enter-from {
+  opacity: 0;
+  transform: translateY(20px) scale(0.96);
+}
+
+.card-list-leave-to {
+  opacity: 0;
+  transform: translateX(-100%) scale(0.9);
+}
+
+.card-list-move {
+  transition: transform 0.35s ease;
 }
 </style>
