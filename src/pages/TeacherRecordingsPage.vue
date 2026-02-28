@@ -160,7 +160,7 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
                   size="medium">
                   {{ difficultyLabels[rec.difficulty] }}
                 </van-tag>
-                <van-tag type="default" round size="small">
+                <van-tag type="default" round size="medium">
                   {{ rec.itemType === 'word' ? '📝 слово' : '💬 фраза' }}
                 </van-tag>
               </div>
