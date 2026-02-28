@@ -82,7 +82,7 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
 
 <template>
 <div class="teacher-recordings">
-  <van-nav-bar title="🦆 Записи учеников" :border="false" />
+  <van-nav-bar title="Записи учеников" :border="false" />
 
   <div v-if="!isTeacher" class="teacher-recordings__denied">
     <van-empty description="Доступ только для преподавателя" image="error" />
@@ -91,13 +91,13 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
   <div v-else class="teacher-recordings__content">
     <!-- Filters -->
     <div class="teacher-recordings__filters surface-card">
-      <p class="text-body" style="margin: 0 0 8px; font-weight: 600;">Фильтры</p>
+      <p class="section-label">Фильтры</p>
 
       <!-- Student filter -->
       <div class="teacher-recordings__filter-row">
         <van-tag :type="filterStudent === 'all' ? 'primary' : 'default'" :plain="filterStudent !== 'all'" round
           size="medium" @click="filterStudent = 'all'">
-          Все ученики
+          Все
         </van-tag>
         <van-tag v-for="student in students" :key="student.id"
           :type="filterStudent === student.id ? 'primary' : 'default'" :plain="filterStudent !== student.id" round
@@ -113,15 +113,15 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
     <!-- Stats -->
     <div class="teacher-recordings__stats surface-card">
       <div class="teacher-recordings__stat">
-        <span class="text-h2">{{ recordings.length }}</span>
-        <span class="text-caption">Всего записей</span>
+        <span class="teacher-recordings__stat-value">{{ recordings.length }}</span>
+        <span class="text-caption">Всего</span>
       </div>
       <div class="teacher-recordings__stat">
-        <span class="text-h2">{{ students.length }}</span>
+        <span class="teacher-recordings__stat-value">{{ students.length }}</span>
         <span class="text-caption">Учеников</span>
       </div>
       <div class="teacher-recordings__stat">
-        <span class="text-h2">{{ filteredRecordings.length }}</span>
+        <span class="teacher-recordings__stat-value">{{ filteredRecordings.length }}</span>
         <span class="text-caption">По фильтру</span>
       </div>
     </div>
@@ -143,7 +143,7 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
                 <span class="recording-card__avatar">🧑‍🎓</span>
                 <div class="recording-card__student-info">
                   <span class="recording-card__student-name">{{ rec.studentName }}</span>
-                  <span class="text-caption">{{ formatDate(rec.recordedAt) }}</span>
+                  <span class="recording-card__date">{{ formatDate(rec.recordedAt) }}</span>
                 </div>
               </div>
               <div class="recording-card__badges">
@@ -152,7 +152,7 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
                   {{ difficultyLabels[rec.difficulty] }}
                 </van-tag>
                 <van-tag type="default" round size="medium">
-                  {{ rec.itemType === 'word' ? '📝 слово' : '💬 фраза' }}
+                  {{ rec.itemType === 'word' ? 'слово' : 'фраза' }}
                 </van-tag>
               </div>
             </div>
@@ -165,7 +165,7 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
             <!-- Row 3: Score bar + transcript -->
             <div class="recording-card__metrics">
               <div class="recording-card__score-row">
-                <span class="recording-card__score-label text-caption">Оценка</span>
+                <span class="recording-card__score-label">Оценка</span>
                 <div class="recording-card__score-bar-track">
                   <div class="recording-card__score-bar-fill" :style="{
                     width: `${rec.score}%`,
@@ -178,18 +178,18 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
               </div>
 
               <div v-if="rec.transcript" class="recording-card__transcript-block">
-                <span class="text-caption">Распознано:</span>
+                <span class="recording-card__transcript-label">Распознано:</span>
                 <span class="recording-card__transcript-text">{{ rec.transcript }}</span>
               </div>
             </div>
 
             <!-- Row 4: Actions -->
             <div class="recording-card__actions">
-              <van-button type="primary" size="small" round block
+              <van-button type="primary" size="mini" round block
                 :icon="playingId === rec.id && isPlaying ? 'pause-circle-o' : 'play-circle-o'" @click="handlePlay(rec)">
                 {{ playingId === rec.id && isPlaying ? 'Стоп' : 'Прослушать' }}
               </van-button>
-              <van-button type="danger" plain size="small" round icon="delete-o" @click="handleRemove(rec)">
+              <van-button type="danger" plain size="mini" round icon="delete-o" @click="handleRemove(rec)">
                 Удалить
               </van-button>
             </div>
@@ -206,21 +206,21 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
   padding: 0 var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   padding-bottom: calc(var(--space-xl) * 3);
 }
 
 .teacher-recordings__denied {
-  padding: var(--space-xl);
+  padding: var(--space-lg);
 }
 
 .teacher-recordings__filters {
-  padding: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
 }
 
 .teacher-recordings__filter-row {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   flex-wrap: wrap;
 }
 
@@ -231,7 +231,7 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
 .teacher-recordings__stats {
   display: flex;
   justify-content: space-around;
-  padding: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
   text-align: center;
 }
 
@@ -239,30 +239,34 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
+}
+
+.teacher-recordings__stat-value {
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--color-text);
 }
 
 .teacher-recordings__list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
-/* ─── Recording card (full-width sequential) ─── */
 .teacher-recordings__cards {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 .recording-card {
   background: var(--color-white);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   border: 1px solid oklch(0.72 0.16 85 / 0.08);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
 }
 
 .recording-card:active {
@@ -271,23 +275,22 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
 }
 
 .recording-card__accent {
-  height: 4px;
+  height: 3px;
   width: 100%;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 .recording-card__body {
-  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  padding: var(--space-sm) var(--space-md) var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 .recording-card__row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .recording-card__row--top {
@@ -297,42 +300,44 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
 .recording-card__student {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .recording-card__avatar {
-  font-size: 28px;
+  font-size: 20px;
   line-height: 1;
 }
 
 .recording-card__student-info {
   display: flex;
   flex-direction: column;
-  gap: 1px;
 }
 
 .recording-card__student-name {
-  font-family: var(--font-primary);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 13px;
   color: var(--color-text);
+}
+
+.recording-card__date {
+  font-size: 11px;
+  color: var(--color-text-secondary);
 }
 
 .recording-card__badges {
   display: flex;
-  gap: var(--space-xs);
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .recording-card__word-block {
-  padding: var(--space-sm) 0;
+  padding: 2px 0;
 }
 
 .recording-card__word-text {
   margin: 0;
-  font-family: var(--font-primary);
   font-weight: 700;
-  font-size: 24px;
+  font-size: 18px;
   line-height: 1.3;
   color: var(--color-text);
   word-break: break-word;
@@ -341,87 +346,71 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
 .recording-card__metrics {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .recording-card__score-row {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .recording-card__score-label {
-  width: 52px;
+  width: 44px;
   flex-shrink: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
 }
 
 .recording-card__score-bar-track {
   flex: 1;
-  height: 8px;
+  height: 6px;
   background: var(--color-lavender-light);
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .recording-card__score-bar-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: 3px;
   transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .recording-card__score-value {
   font-family: var(--font-phonetic);
   font-weight: 700;
-  font-size: 16px;
-  width: 44px;
+  font-size: 14px;
+  width: 40px;
   text-align: right;
 }
 
 .recording-card__transcript-block {
   display: flex;
   align-items: baseline;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
 }
 
+.recording-card__transcript-label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
 .recording-card__transcript-text {
-  font-family: var(--font-primary);
-  font-size: 15px;
+  font-size: 13px;
   color: var(--color-text);
   word-break: break-word;
 }
 
 .recording-card__actions {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .recording-card__actions .van-button:first-child {
   flex: 1;
-}
-
-/* List transition animations */
-.card-list-enter-active {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-list-leave-active {
-  transition: all 0.3s ease;
-}
-
-.card-list-enter-from {
-  opacity: 0;
-  transform: translateY(20px) scale(0.96);
-}
-
-.card-list-leave-to {
-  opacity: 0;
-  transform: translateX(-100%) scale(0.9);
-}
-
-.card-list-move {
-  transition: transform 0.35s ease;
 }
 </style>

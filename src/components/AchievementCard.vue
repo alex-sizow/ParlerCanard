@@ -29,17 +29,17 @@ defineProps<{
 .achievement-card {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md);
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   transition: opacity 0.2s ease;
 }
 
 .achievement-card--locked {
-  opacity: 0.5;
+  opacity: 0.45;
 }
 
 .achievement-card__icon {
-  font-size: 28px;
+  font-size: 22px;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -52,12 +52,13 @@ defineProps<{
 .achievement-card__title {
   font-family: var(--font-primary);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 13px;
   margin: 0;
   color: var(--color-text);
 }
 
 .achievement-card__desc {
-  margin: 2px 0 0;
+  margin: 1px 0 0;
+  font-size: 12px;
 }
 </style>

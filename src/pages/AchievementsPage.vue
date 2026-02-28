@@ -50,7 +50,7 @@ const unlockedCount = computed(() =>
 
 <template>
 <div class="achievements-page">
-  <van-nav-bar title="🦆 Progress & Achievements" :border="false" />
+  <van-nav-bar title="Progress & Achievements" :border="false" />
 
   <div class="achievements-page__content">
     <!-- Streak -->
@@ -62,14 +62,14 @@ const unlockedCount = computed(() =>
     <!-- Achievements -->
     <div class="achievements-section">
       <div class="achievements-section__header">
-        <h3 class="text-h3">Achievements</h3>
-        <van-tag type="primary" round>
+        <span class="section-label">Achievements</span>
+        <van-tag type="primary" round size="medium">
           {{ unlockedCount }} / {{ achievements.length }}
         </van-tag>
       </div>
 
       <div v-for="group in groupedAchievements" :key="group.category" class="achievement-group">
-        <h4 class="achievement-group__title text-caption" style="font-weight: 600; color: var(--color-text);">
+        <h4 class="achievement-group__title">
           {{ group.label }}
         </h4>
         <div class="achievement-group__list">
@@ -87,30 +87,29 @@ const unlockedCount = computed(() =>
   padding: 0 var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-sm);
 }
 
 .achievements-section__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.achievements-section__header h3 {
-  margin: 0;
+  margin-top: var(--space-xs);
 }
 
 .achievement-group {
-  margin-top: var(--space-md);
+  margin-top: var(--space-sm);
 }
 
 .achievement-group__title {
-  margin: 0 0 var(--space-sm);
+  margin: 0 0 var(--space-xs);
+  font-weight: 600;
+  font-size: 13px;
 }
 
 .achievement-group__list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 </style>

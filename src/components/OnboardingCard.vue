@@ -20,11 +20,11 @@ function dismiss() {
 <template>
 <div v-if="!isDismissed" class="onboarding surface-card-elevated animate-fade-in">
   <div class="onboarding__header">
-    <h3 class="text-h3">Welcome to ParlerCanard! 🦆</h3>
-    <van-icon name="cross" size="20" color="var(--color-text-secondary)" class="onboarding__close" @click="dismiss" />
+    <h3 class="onboarding__title">Welcome to ParlerCanard!</h3>
+    <van-icon name="cross" size="18" color="var(--color-text-secondary)" class="onboarding__close" @click="dismiss" />
   </div>
 
-  <p class="text-body onboarding__subtitle">Master French pronunciation in 4 simple steps:</p>
+  <p class="onboarding__subtitle">Master French pronunciation in 4 steps:</p>
 
   <div class="onboarding__steps">
     <div v-for="(step, i) in steps" :key="i" class="onboarding__step">
@@ -33,15 +33,15 @@ function dismiss() {
     </div>
   </div>
 
-  <p class="text-caption onboarding__tip">🦆 Tip: Allow microphone access so we can hear you quack!</p>
+  <p class="onboarding__tip">Tip: Allow microphone access for speech recognition.</p>
 
-  <van-button type="primary" round block @click="dismiss">Let's Quack!</van-button>
+  <van-button type="primary" round block size="small" @click="dismiss">Get Started</van-button>
 </div>
 </template>
 
 <style scoped>
 .onboarding {
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
 }
 
 .onboarding__header {
@@ -50,37 +50,40 @@ function dismiss() {
   align-items: flex-start;
 }
 
-.onboarding__header h3 {
+.onboarding__title {
   margin: 0;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .onboarding__close {
   cursor: pointer;
-  padding: 4px;
+  padding: 2px;
 }
 
 .onboarding__subtitle {
-  margin: var(--space-sm) 0 var(--space-md);
+  margin: 4px 0 var(--space-sm);
+  font-size: 14px;
   color: var(--color-text-secondary);
 }
 
 .onboarding__steps {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
 }
 
 .onboarding__step {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  font-size: 15px;
+  gap: var(--space-sm);
+  font-size: 13px;
 }
 
 .onboarding__step-num {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--color-primary);
   color: var(--color-white);
@@ -88,11 +91,13 @@ function dismiss() {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 11px;
   flex-shrink: 0;
 }
 
 .onboarding__tip {
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
+  font-size: 12px;
+  color: var(--color-text-secondary);
 }
 </style>

@@ -44,9 +44,8 @@ const emit = defineEmits<{ listen: []; record: []; select: [] }>()
 <style scoped>
 .practice-card {
   cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.25s ease,
-    border-color 0.3s ease;
+  padding: var(--space-md);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.3s ease;
   will-change: transform;
 }
 
@@ -63,25 +62,29 @@ const emit = defineEmits<{ listen: []; record: []; select: [] }>()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
 }
 
 .practice-card__text {
-  margin: 0 0 var(--space-xs);
+  margin: 0 0 2px;
+  font-size: 20px;
+  font-weight: 600;
   color: var(--color-text);
 }
 
 .practice-card__ipa {
-  margin: 0 0 var(--space-xs);
+  margin: 0 0 2px;
   color: var(--color-primary);
+  font-size: 15px;
 }
 
 .practice-card__translation {
-  margin: 0 0 var(--space-md);
+  margin: 0 0 var(--space-sm);
+  font-size: 13px;
 }
 
 .practice-card__actions {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 </style>

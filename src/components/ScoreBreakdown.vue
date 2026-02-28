@@ -10,7 +10,7 @@ defineProps<{
 
 const items = [
   { key: 'accuracy', label: 'Accuracy', icon: '🎯', weight: '40%' },
-  { key: 'confidence', label: 'Clarity', icon: '🔊', weight: '30%' },
+  { key: 'confidence', label: 'Confidence', icon: '🔊', weight: '30%' },
   { key: 'intonation', label: 'Intonation', icon: '🎵', weight: '20%' },
   { key: 'fluency', label: 'Fluency', icon: '💨', weight: '10%' },
 ] as const

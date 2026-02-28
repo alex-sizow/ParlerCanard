@@ -154,7 +154,6 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
 </template>
 
 <style scoped>
-/* ─── Overlay ─── */
 .sheet-overlay {
   position: fixed;
   inset: 0;
@@ -176,7 +175,6 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
   opacity: 0;
 }
 
-/* ─── Sheet container ─── */
 .sheet {
   position: fixed;
   bottom: 0;
@@ -193,7 +191,6 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
   box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.12);
   will-change: transform;
   transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-  /* Center on desktop */
   max-width: 480px;
   margin: 0 auto;
 }
@@ -219,7 +216,6 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
   transform: translateY(100%) !important;
 }
 
-/* ─── Header ─── */
 .sheet__header {
   flex-shrink: 0;
   display: flex;
@@ -227,7 +223,6 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
   justify-content: center;
   padding: 12px 16px 8px;
   touch-action: none;
-  /* prevent browser pull-to-refresh */
   cursor: grab;
   user-select: none;
 }
@@ -267,7 +262,6 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
   background: var(--color-lavender-light);
 }
 
-/* ─── Scrollable body (fixed height, never shifts) ─── */
 .sheet__body {
   flex: 1;
   min-height: 0;
@@ -324,7 +318,6 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
   width: 100%;
 }
 
-/* ─── Inner transitions ─── */
 .result-slide-enter-active {
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }

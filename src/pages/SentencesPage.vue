@@ -19,7 +19,7 @@ const { activeItem, selectItem, listenTo } = usePracticeSession<Sentence>({
 
 <template>
 <div class="sentences-page">
-  <van-nav-bar title="🦆 Practice Sentences" :border="false" />
+  <van-nav-bar title="Practice Sentences" :border="false" />
 
   <div class="sentences-page__content">
     <DifficultyFilter v-model="sentenceDifficulty" :counts="sentenceCounts" />
@@ -89,20 +89,19 @@ const { activeItem, selectItem, listenTo } = usePracticeSession<Sentence>({
 }
 
 .sentences-page__list {
-  margin-top: var(--space-md);
+  margin-top: var(--space-sm);
 }
 
 .sentences-page__cards {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 .sentence-card {
   cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.25s ease,
-    border-color 0.3s ease;
+  padding: var(--space-md);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.3s ease;
   will-change: transform;
 }
 
@@ -119,41 +118,46 @@ const { activeItem, selectItem, listenTo } = usePracticeSession<Sentence>({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
 }
 
 .sentence-card__text {
-  margin: 0 0 var(--space-xs);
+  margin: 0 0 2px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .sentence-card__ipa {
-  margin: 0 0 var(--space-xs);
+  margin: 0 0 2px;
   color: var(--color-primary);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .sentence-card__translation {
-  margin: 0 0 var(--space-md);
+  margin: 0 0 var(--space-sm);
+  font-size: 13px;
+  color: var(--color-text-secondary);
 }
 
 .sentence-card__actions {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .phrases-section {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .phrase-item {
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   transition: background-color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-tap-highlight-color: transparent;
 }

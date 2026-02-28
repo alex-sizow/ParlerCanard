@@ -48,11 +48,11 @@ const categoryColors: Record<string, string> = {
 
 <template>
 <div class="phonemes-page">
-  <van-nav-bar title="🦆 Phoneme Library" :border="false" />
+  <van-nav-bar title="Phoneme Library" :border="false" />
 
   <div class="phonemes-page__content">
     <!-- Category Filter -->
-    <div class="phonemes-page__filter surface-card">
+    <div class="phonemes-page__filter">
       <van-tag v-for="cat in categories" :key="cat.key" :type="activeCategory === cat.key ? 'primary' : 'default'"
         :plain="activeCategory !== cat.key" round size="medium" class="phonemes-page__tag"
         @click="activeCategory = cat.key">
@@ -76,7 +76,7 @@ const categoryColors: Record<string, string> = {
   </div>
 
   <!-- Detail Popup -->
-  <van-popup v-model:show="showDetail" position="bottom" round :style="{ maxHeight: '70vh' }" closeable>
+  <van-popup v-model:show="showDetail" position="bottom" round :style="{ maxHeight: '60vh' }" closeable>
     <div v-if="selectedPhoneme" class="phoneme-detail">
       <div class="phoneme-detail__symbol"
         :style="{ color: categoryColors[selectedPhoneme.category] ?? 'var(--color-text)' }">
@@ -90,26 +90,24 @@ const categoryColors: Record<string, string> = {
         {{ selectedPhoneme.category }}
       </van-tag>
 
-      <p class="text-body phoneme-detail__desc">
+      <p class="phoneme-detail__desc">
         {{ selectedPhoneme.description }}
       </p>
 
       <div class="phoneme-detail__example surface-card">
         <div class="phoneme-detail__example-row">
-          <span class="text-h3">{{ selectedPhoneme.example }}</span>
-          <span class="text-phonetic">{{ selectedPhoneme.exampleIpa }}</span>
+          <span class="phoneme-detail__example-word">{{ selectedPhoneme.example }}</span>
+          <span class="text-phonetic" style="font-size: 14px;">{{ selectedPhoneme.exampleIpa }}</span>
         </div>
-        <van-button type="primary" size="small" round icon="volume-o" :loading="isSpeaking"
+        <van-button type="primary" size="mini" round icon="volume-o" :loading="isSpeaking"
           @click="listenExample(selectedPhoneme!)">
           Listen
         </van-button>
       </div>
 
       <div class="phoneme-detail__tip surface-card">
-        <h4 class="text-caption" style="margin: 0 0 4px; font-weight: 600; color: var(--color-text);">
-          💡 Articulation Tip
-        </h4>
-        <p class="text-body" style="margin: 0;">
+        <h4 class="section-label" style="margin: 0 0 2px;">Articulation Tip</h4>
+        <p class="phoneme-detail__tip-text">
           {{ selectedPhoneme.articulationTip }}
         </p>
       </div>
@@ -125,9 +123,8 @@ const categoryColors: Record<string, string> = {
 
 .phonemes-page__filter {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   flex-wrap: wrap;
-  padding: var(--space-md);
 }
 
 .phonemes-page__tag {
@@ -137,19 +134,18 @@ const categoryColors: Record<string, string> = {
 .phonemes-page__grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-sm);
-  margin-top: var(--space-md);
+  gap: 6px;
+  margin-top: var(--space-sm);
 }
 
 .phoneme-tile {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-md) var(--space-sm);
+  gap: 2px;
+  padding: var(--space-sm) var(--space-xs);
   cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
   text-align: center;
   -webkit-tap-highlight-color: transparent;
 }
@@ -161,26 +157,26 @@ const categoryColors: Record<string, string> = {
 
 .phoneme-tile__symbol {
   font-family: var(--font-phonetic);
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 500;
   line-height: 1;
 }
 
 .phoneme-tile__example {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .phoneme-detail {
-  padding: var(--space-xl) var(--space-lg);
+  padding: var(--space-lg) var(--space-md);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 .phoneme-detail__symbol {
   font-family: var(--font-phonetic);
-  font-size: 56px;
+  font-size: 40px;
   font-weight: 500;
   line-height: 1;
 }
@@ -188,6 +184,7 @@ const categoryColors: Record<string, string> = {
 .phoneme-detail__desc {
   text-align: center;
   margin: 0;
+  font-size: 14px;
   color: var(--color-text-secondary);
 }
 
@@ -196,18 +193,28 @@ const categoryColors: Record<string, string> = {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md);
+  gap: var(--space-xs);
+  padding: var(--space-sm);
 }
 
 .phoneme-detail__example-row {
   display: flex;
   align-items: baseline;
-  gap: var(--space-md);
+  gap: var(--space-sm);
+}
+
+.phoneme-detail__example-word {
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .phoneme-detail__tip {
   width: 100%;
-  padding: var(--space-md);
+  padding: var(--space-sm);
+}
+
+.phoneme-detail__tip-text {
+  margin: 0;
+  font-size: 14px;
 }
 </style>

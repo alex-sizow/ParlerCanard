@@ -28,18 +28,18 @@ const cards = computed(() => [
 .streak-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 .streak-card {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md) var(--space-lg);
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
 }
 
 .streak-card__icon {
-  font-size: 32px;
+  font-size: 24px;
   line-height: 1;
 }
 
@@ -51,12 +51,13 @@ const cards = computed(() => [
 .streak-card__value {
   font-family: var(--font-primary);
   font-weight: 700;
-  font-size: 28px;
+  font-size: 22px;
   line-height: 1;
   color: var(--color-text);
 }
 
 .streak-card__label {
-  margin-top: 2px;
+  margin-top: 1px;
+  font-size: 12px;
 }
 </style>

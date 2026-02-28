@@ -78,7 +78,7 @@ const filterLabels = { all: 'Все', ...difficultyLabels }
 
 <template>
 <div class="teacher-words">
-  <van-nav-bar title="🦆 Управление словами" :border="false" />
+  <van-nav-bar title="Управление словами" :border="false" />
 
   <div v-if="!isTeacher" class="teacher-words__denied">
     <van-empty description="Доступ только для преподавателя" image="error" />
@@ -89,7 +89,7 @@ const filterLabels = { all: 'Все', ...difficultyLabels }
     <DifficultyFilter v-model="filterDifficulty" :counts="counts" :labels="filterLabels" use-colored-tags />
 
     <!-- Add button -->
-    <van-button type="primary" block round icon="plus" @click="showAddForm = true">
+    <van-button type="primary" block round size="small" icon="plus" @click="showAddForm = true">
       Добавить слово
     </van-button>
 
@@ -104,18 +104,18 @@ const filterLabels = { all: 'Все', ...difficultyLabels }
           </van-tag>
           <van-button type="danger" plain size="mini" round icon="delete-o" @click="handleRemove(word)" />
         </div>
-        <h3 class="text-h2" style="margin: 8px 0 4px;">{{ word.text }}</h3>
-        <p class="text-phonetic" style="margin: 0 0 4px; color: var(--color-primary);">{{ word.ipa }}</p>
-        <p class="text-caption" style="margin: 0;">{{ word.translation }}</p>
+        <h3 class="teacher-word-card__text">{{ word.text }}</h3>
+        <p class="teacher-word-card__ipa">{{ word.ipa }}</p>
+        <p class="teacher-word-card__translation">{{ word.translation }}</p>
       </div>
     </div>
   </div>
 
   <!-- Add Word Popup -->
-  <van-popup v-model:show="showAddForm" position="bottom" round closeable :style="{ maxHeight: '85vh' }"
+  <van-popup v-model:show="showAddForm" position="bottom" round closeable :style="{ maxHeight: '80vh' }"
     @close="resetForm">
     <div class="add-form">
-      <h2 class="text-h2" style="margin: 0 0 16px; text-align: center;">Новое слово</h2>
+      <h2 class="add-form__title">Новое слово</h2>
 
       <van-cell-group inset>
         <van-field v-model="form.text" label="Слово" placeholder="Bonjour" clearable />
@@ -124,7 +124,7 @@ const filterLabels = { all: 'Все', ...difficultyLabels }
       </van-cell-group>
 
       <div class="add-form__difficulty">
-        <p class="text-body" style="margin: 0 0 8px; font-weight: 600;">Уровень сложности</p>
+        <p class="add-form__difficulty-label">Уровень сложности</p>
         <van-radio-group v-model="form.difficulty" direction="horizontal">
           <van-radio v-for="opt in difficultyOptions" :key="opt.value" :name="opt.value">
             {{ opt.text }}
@@ -146,18 +146,22 @@ const filterLabels = { all: 'Все', ...difficultyLabels }
   padding: 0 var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   padding-bottom: calc(var(--space-xl) * 3);
 }
 
 .teacher-words__denied {
-  padding: var(--space-xl);
+  padding: var(--space-lg);
 }
 
 .teacher-words__list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
+}
+
+.teacher-word-card {
+  padding: var(--space-sm) var(--space-md);
 }
 
 .teacher-word-card__header {
@@ -166,14 +170,46 @@ const filterLabels = { all: 'Все', ...difficultyLabels }
   align-items: center;
 }
 
+.teacher-word-card__text {
+  margin: 4px 0 2px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.teacher-word-card__ipa {
+  margin: 0 0 2px;
+  font-family: var(--font-phonetic);
+  font-size: 14px;
+  color: var(--color-primary);
+}
+
+.teacher-word-card__translation {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
 .add-form {
-  padding: var(--space-xl) var(--space-lg);
+  padding: var(--space-lg) var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
+}
+
+.add-form__title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
 }
 
 .add-form__difficulty {
-  padding: 0 var(--space-md);
+  padding: 0 var(--space-sm);
+}
+
+.add-form__difficulty-label {
+  margin: 0 0 6px;
+  font-weight: 600;
+  font-size: 13px;
 }
 </style>

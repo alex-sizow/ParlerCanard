@@ -74,18 +74,39 @@ export async function initModel (): Promise<Model> {
   }
 }
 
+/**
+ * Build synthetic VoskWord entries from plain text when Vosk only provides a
+ * partial transcript without word-level data. Uses default confidence 0.5.
+ */
+function buildSyntheticWords (text: string): VoskWord[] {
+  const tokens = text.trim().split(/\s+/).filter(Boolean)
+  if (tokens.length === 0) return []
+  // Estimate 0.4s per word, evenly spaced
+  return tokens.map((word, i) => ({
+    word,
+    conf: 0.5,
+    start: i * 0.4,
+    end: (i + 1) * 0.4,
+  }))
+}
+
 export function createRecognizerSession (
   model: Model,
   stream: MediaStream,
+  sharedAudioContext?: AudioContext,
 ): { promise: Promise<VoskResult>; stop: () => void } {
-  const audioContext = new AudioContext({ sampleRate: 16000 })
+  // Use shared AudioContext when provided; create a dedicated 16kHz one otherwise
+  const ownsContext = !sharedAudioContext
+  const audioContext = sharedAudioContext ?? new AudioContext({ sampleRate: 16000 })
   const source = audioContext.createMediaStreamSource(stream)
 
-  const recognizer: KaldiRecognizer = new model.KaldiRecognizer(audioContext.sampleRate)
+  const targetSampleRate = 16000
+  const recognizer: KaldiRecognizer = new model.KaldiRecognizer(targetSampleRate)
   recognizer.setWords(true)
 
   // ScriptProcessorNode is deprecated but vosk-browser requires AudioBuffer input
-  const processor = audioContext.createScriptProcessor(4096, 1, 1)
+  const bufferSize = 4096
+  const processor = audioContext.createScriptProcessor(bufferSize, 1, 1)
 
   let finalResult: VoskResult | null = null
   let partialText = ''
@@ -112,7 +133,24 @@ export function createRecognizerSession (
     processor.onaudioprocess = (event: AudioProcessingEvent) => {
       if (!stopped) {
         try {
-          recognizer.acceptWaveform(event.inputBuffer)
+          const inputBuffer = event.inputBuffer
+          // Downsample to 16kHz if the AudioContext runs at a different rate
+          if (audioContext.sampleRate !== targetSampleRate) {
+            const inputData = inputBuffer.getChannelData(0)
+            const ratio = audioContext.sampleRate / targetSampleRate
+            const outputLength = Math.floor(inputData.length / ratio)
+            const outputData = new Float32Array(outputLength)
+            for (let i = 0; i < outputLength; i++) {
+              outputData[i] = inputData[Math.floor(i * ratio)]!
+            }
+            // Create a new AudioBuffer at target rate for Vosk
+            const offlineCtx = new OfflineAudioContext(1, outputLength, targetSampleRate)
+            const buffer = offlineCtx.createBuffer(1, outputLength, targetSampleRate)
+            buffer.getChannelData(0).set(outputData)
+            recognizer.acceptWaveform(buffer)
+          } else {
+            recognizer.acceptWaveform(inputBuffer)
+          }
         } catch {
           // Recognizer may be removed already
         }
@@ -131,12 +169,24 @@ export function createRecognizerSession (
           // Ignore
         }
 
-        // Wait a bit for the final result event
-        setTimeout(() => {
-          const result = finalResult ?? { text: partialText, words: [] }
+        // Wait for the final result event — longer timeout for slower devices
+        const checkInterval = setInterval(() => {
+          if (finalResult) {
+            clearInterval(checkInterval)
+            clearTimeout(safetyTimeout)
+            cleanup()
+            resolve(finalResult)
+          }
+        }, 100)
+
+        // Safety timeout — if final result never arrives, use partial with synthetic words
+        const safetyTimeout = setTimeout(() => {
+          clearInterval(checkInterval)
+          const text = finalResult?.text ?? partialText
+          const words = finalResult?.words ?? buildSyntheticWords(text)
           cleanup()
-          resolve(result)
-        }, 300)
+          resolve({ text, words })
+        }, 2000)
       }, 200)
     }
 
@@ -149,7 +199,8 @@ export function createRecognizerSession (
       source.disconnect()
       processor.disconnect()
       recognizer.remove()
-      audioContext.close()
+      // Only close the AudioContext if we created it ourselves
+      if (ownsContext) audioContext.close()
     } catch {
       // Cleanup errors are non-critical
     }

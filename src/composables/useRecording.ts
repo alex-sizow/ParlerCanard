@@ -152,9 +152,10 @@ export function useRecording () {
     stopPitch = pitchTracker.stop
 
     // Start Vosk recognizer (model already loaded above)
+    // Share the same AudioContext to avoid duplicate audio pipelines
     let voskPromise: Promise<{ text: string; words: VoskWord[] }>
     if (model) {
-      const session = createRecognizerSession(model, stream)
+      const session = createRecognizerSession(model, stream, audioContext!)
       stopVosk = session.stop
       voskPromise = session.promise
     } else {

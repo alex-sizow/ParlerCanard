@@ -19,7 +19,7 @@ const { isSupported, selectItem, listenTo } = usePracticeSession<Word>({
 
 <template>
 <div class="words-page">
-  <van-nav-bar title="🦆 Practice Words" :border="false" />
+  <van-nav-bar title="Practice Words" :border="false" />
 
   <div class="words-page__content">
     <OnboardingCard />
@@ -54,18 +54,19 @@ const { isSupported, selectItem, listenTo } = usePracticeSession<Word>({
 .words-page__warning {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md);
-  margin-bottom: var(--space-md);
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-sm);
+  font-size: 13px;
 }
 
 .words-page__list {
-  margin-top: var(--space-md);
+  margin-top: var(--space-sm);
 }
 
 .words-page__cards {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 </style>

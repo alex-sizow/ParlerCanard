@@ -59,6 +59,7 @@ async function handleLogout() {
       message: 'Are you sure you want to log out?',
       showCancelButton: true,
       confirmButtonText: 'Log Out',
+      cancelButtonText: 'Cancel',
       confirmButtonColor: 'var(--color-error)',
     })
     logout()
@@ -71,7 +72,7 @@ async function handleLogout() {
 
 <template>
 <div class="account-page">
-  <van-nav-bar title="🦆 Account" :border="false" />
+  <van-nav-bar title="Account" :border="false" />
 
   <div class="account-page__content">
     <!-- Profile Card -->
@@ -80,10 +81,10 @@ async function handleLogout() {
         {{ currentUser?.avatar ?? '👤' }}
       </div>
       <div class="profile-card__info">
-        <h2 class="text-h2" style="margin: 0;">{{ currentUser?.name }}</h2>
+        <h2 class="profile-card__name">{{ currentUser?.name }}</h2>
         <div class="profile-card__meta">
           <van-tag :type="isTeacher ? 'warning' : 'primary'" round size="medium">
-            {{ isTeacher ? '👩‍🏫 Teacher' : '🧑‍🎓 Student' }}
+            {{ isTeacher ? 'Teacher' : 'Student' }}
           </van-tag>
           <span class="text-caption">Since {{ memberSince }}</span>
         </div>
@@ -93,10 +94,10 @@ async function handleLogout() {
     <!-- Overall Progress -->
     <div class="progress-section surface-card">
       <div class="progress-section__header">
-        <h3 class="text-h3" style="margin: 0;">Overall Progress</h3>
-        <span class="text-h3" style="color: var(--color-primary);">{{ progressPercent }}%</span>
+        <span class="section-label">Progress</span>
+        <span class="progress-section__pct">{{ progressPercent }}%</span>
       </div>
-      <van-progress :percentage="progressPercent" :stroke-width="10" color="var(--color-primary)"
+      <van-progress :percentage="progressPercent" :stroke-width="6" color="var(--color-primary)"
         track-color="var(--color-lavender-light)" />
     </div>
 
@@ -108,47 +109,45 @@ async function handleLogout() {
 
     <!-- Recent Scores -->
     <div v-if="recentScores.length > 0" class="recent-section surface-card">
-      <h3 class="text-h3" style="margin: 0 0 12px;">Recent Scores</h3>
+      <span class="section-label" style="display: block; margin-bottom: var(--space-sm);">Recent Scores</span>
       <div class="recent-scores">
         <div v-for="(score, i) in recentScores" :key="i" class="recent-scores__bar">
           <div class="recent-scores__fill" :style="{
             height: `${score}%`,
             backgroundColor: scoreCssColor(score),
           }" />
-          <span class="recent-scores__label text-caption">{{ score }}%</span>
+          <span class="recent-scores__label">{{ score }}%</span>
         </div>
       </div>
     </div>
 
     <!-- Teacher Admin Panel -->
     <div v-if="isTeacher" class="teacher-panel surface-card-elevated">
-      <h3 class="text-h3" style="margin: 0 0 8px;">
-        👩‍🏫 Teacher Panel
-      </h3>
-      <p class="text-caption" style="margin: 0 0 16px;">
-        Registered students: {{ studentList.length }}
-      </p>
+      <div class="teacher-panel__header">
+        <span class="section-label">Teacher Panel</span>
+        <van-tag type="default" round size="medium">{{ studentList.length }} students</van-tag>
+      </div>
 
-      <div v-if="studentList.length === 0" class="text-caption" style="text-align: center; padding: 16px 0;">
+      <div v-if="studentList.length === 0" class="text-caption" style="text-align: center; padding: 12px 0;">
         No students registered yet
       </div>
 
       <div v-for="student in studentList" :key="student.id" class="teacher-panel__student">
         <span class="teacher-panel__avatar">{{ student.avatar }}</span>
         <div class="teacher-panel__student-info">
-          <span class="text-body" style="font-weight: 500;">{{ student.name }}</span>
+          <span class="teacher-panel__student-name">{{ student.name }}</span>
           <span class="text-caption">Joined {{ student.joinedAt }}</span>
         </div>
       </div>
     </div>
 
     <!-- Install PWA -->
-    <div v-if="canInstall" class="pwa-install surface-card-elevated">
+    <div v-if="canInstall" class="pwa-install surface-card">
       <div class="pwa-install__icon">📲</div>
       <div class="pwa-install__info">
-        <h3 class="text-h3" style="margin: 0;">Install App</h3>
-        <p class="text-caption" style="margin: 4px 0 0;">
-          Install ParlerCanard for offline use. The speech model will be cached automatically.
+        <span class="pwa-install__title">Install App</span>
+        <p class="text-caption" style="margin: 2px 0 0;">
+          Offline use with cached speech model.
         </p>
       </div>
       <van-button type="primary" round size="small" @click="install">
@@ -157,11 +156,11 @@ async function handleLogout() {
     </div>
     <div v-else-if="isInstalled" class="pwa-installed surface-card">
       <span>✅</span>
-      <span class="text-caption">App installed — works offline!</span>
+      <span class="text-caption">Installed — works offline</span>
     </div>
 
     <!-- Logout -->
-    <van-button type="default" block round size="large" class="account-page__logout" @click="handleLogout">
+    <van-button type="default" block round size="normal" class="account-page__logout" @click="handleLogout">
       Log Out
     </van-button>
   </div>
@@ -173,18 +172,19 @@ async function handleLogout() {
   padding: 0 var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-sm);
   padding-bottom: var(--space-xl);
 }
 
 .profile-card {
   display: flex;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-md);
+  padding: var(--space-md);
 }
 
 .profile-card__avatar {
-  font-size: 56px;
+  font-size: 40px;
   line-height: 1;
 }
 
@@ -192,33 +192,46 @@ async function handleLogout() {
   flex: 1;
 }
 
+.profile-card__name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
 .profile-card__meta {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  margin-top: var(--space-xs);
+  gap: var(--space-xs);
+  margin-top: 4px;
 }
 
 .progress-section {
-  padding: var(--space-lg);
+  padding: var(--space-md);
 }
 
 .progress-section__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.progress-section__pct {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--color-primary);
 }
 
 .recent-section {
-  padding: var(--space-lg);
+  padding: var(--space-md);
 }
 
 .recent-scores {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   align-items: flex-end;
-  height: 100px;
+  height: 72px;
 }
 
 .recent-scores__bar {
@@ -226,31 +239,40 @@ async function handleLogout() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   height: 100%;
   justify-content: flex-end;
 }
 
 .recent-scores__fill {
   width: 100%;
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border-radius: 3px 3px 0 0;
   transition: height 0.5s ease;
-  min-height: 4px;
+  min-height: 3px;
 }
 
 .recent-scores__label {
-  font-size: 11px;
+  font-size: 10px;
+  color: var(--color-text-secondary);
 }
 
 .teacher-panel {
-  border: 2px solid oklch(0.75 0.12 85 / 0.4);
+  border: 1px solid oklch(0.75 0.12 85 / 0.3);
+  padding: var(--space-md);
+}
+
+.teacher-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
 }
 
 .teacher-panel__student {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-sm) 0;
+  gap: var(--space-sm);
+  padding: 6px 0;
   border-bottom: 1px solid var(--color-lavender-light);
 }
 
@@ -259,7 +281,7 @@ async function handleLogout() {
 }
 
 .teacher-panel__avatar {
-  font-size: 28px;
+  font-size: 22px;
 }
 
 .teacher-panel__student-info {
@@ -267,8 +289,13 @@ async function handleLogout() {
   flex-direction: column;
 }
 
+.teacher-panel__student-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .account-page__logout {
-  margin-top: var(--space-md);
+  margin-top: var(--space-sm);
   color: var(--color-error);
   border-color: var(--color-error);
 }
@@ -276,12 +303,13 @@ async function handleLogout() {
 .pwa-install {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  border: 2px dashed oklch(0.72 0.16 85 / 0.5);
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border: 1px dashed oklch(0.72 0.16 85 / 0.4);
 }
 
 .pwa-install__icon {
-  font-size: 32px;
+  font-size: 24px;
   line-height: 1;
 }
 
@@ -289,11 +317,16 @@ async function handleLogout() {
   flex: 1;
 }
 
+.pwa-install__title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
 .pwa-installed {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-lg);
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
   opacity: 0.7;
 }
 </style>

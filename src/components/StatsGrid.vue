@@ -22,7 +22,7 @@ withDefaults(defineProps<{
 <style scoped>
 .stats-grid {
   display: grid;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 .stats-grid--2col {
@@ -31,45 +31,46 @@ withDefaults(defineProps<{
 
 .stats-grid--3col {
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-sm);
+  gap: 6px;
 }
 
 .stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-md);
+  gap: 2px;
+  padding: var(--space-sm);
 }
 
 .stat-card__icon {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .stat-card__value {
   font-family: var(--font-primary);
   font-weight: 700;
-  font-size: 24px;
+  font-size: 18px;
   color: var(--color-text);
 }
 
 .stat-card__label {
   text-align: center;
+  font-size: 11px;
 }
 
 .stats-grid--3col .stat-card {
-  padding: var(--space-md) var(--space-sm);
+  padding: var(--space-sm) var(--space-xs);
 }
 
 .stats-grid--3col .stat-card__icon {
-  font-size: 22px;
-}
-
-.stats-grid--3col .stat-card__value {
   font-size: 18px;
 }
 
+.stats-grid--3col .stat-card__value {
+  font-size: 15px;
+}
+
 .stats-grid--3col .stat-card__label {
-  font-size: 12px;
+  font-size: 10px;
 }
 </style>

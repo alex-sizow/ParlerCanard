@@ -28,7 +28,7 @@ const getTagType = (key: DifficultyFilter) =>
 </script>
 
 <template>
-<div class="difficulty-filter surface-card">
+<div class="difficulty-filter">
   <div class="difficulty-filter__row">
     <van-tag v-for="{ key } in levels" :key="key"
       :type="(getTagType(key) as 'primary' | 'success' | 'warning' | 'danger' | 'default')" :plain="modelValue !== key"
@@ -42,12 +42,12 @@ const getTagType = (key: DifficultyFilter) =>
 
 <style scoped>
 .difficulty-filter {
-  padding: var(--space-md);
+  padding: var(--space-xs) 0;
 }
 
 .difficulty-filter__row {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   flex-wrap: wrap;
 }
 
@@ -57,6 +57,6 @@ const getTagType = (key: DifficultyFilter) =>
 }
 
 .difficulty-filter__badge {
-  margin-left: 4px;
+  margin-left: 3px;
 }
 </style>
