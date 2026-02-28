@@ -41,7 +41,7 @@ function startVisualization() {
     ctx.beginPath()
 
     for (let i = 0; i < data.length; i++) {
-      const y = (data[i] / 128.0) * canvas.height / 2
+      const y = (data[i]! / 128.0) * canvas.height / 2
       i === 0 ? ctx.moveTo(0, y) : ctx.lineTo(i * slice, y)
     }
     ctx.lineTo(canvas.width, canvas.height / 2)

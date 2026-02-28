@@ -25,7 +25,7 @@ export function useProgress () {
   function recordAttempt (id: string, score: number) {
     state.attempts.push({ id, score, timestamp: Date.now() })
     state.totalSessions++
-    state.lastPracticeDate = new Date().toISOString().split('T')[0]
+    state.lastPracticeDate = new Date().toISOString().split('T')[0] ?? null
   }
 
   const scores = () => state.attempts.map(a => a.score)

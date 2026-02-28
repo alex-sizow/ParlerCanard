@@ -32,7 +32,7 @@ export function useAchievements () {
   )
 
   function updateStreak () {
-    const today = new Date().toISOString().split('T')[0]
+    const today = new Date().toISOString().split('T')[0]!
     if (state.lastStreakDate === today) return
 
     if (state.lastStreakDate) {

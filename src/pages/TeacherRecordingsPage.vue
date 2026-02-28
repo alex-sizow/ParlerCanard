@@ -145,14 +145,14 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
             <span style="font-size: 20px;">🧑‍🎓</span>
             <span class="text-body" style="font-weight: 600;">{{ rec.studentName }}</span>
           </div>
-          <van-tag :type="(difficultyColors[rec.difficulty] as 'success' | 'warning' | 'danger')" round size="small">
+          <van-tag :type="(difficultyColors[rec.difficulty] as 'success' | 'warning' | 'danger')" round size="medium">
             {{ difficultyLabels[rec.difficulty] }}
           </van-tag>
         </div>
 
         <div class="recording-card__word">
           <h3 class="text-h2" style="margin: 0;">{{ rec.itemText }}</h3>
-          <van-tag type="default" round size="small">
+          <van-tag type="default" round size="medium">
             {{ rec.itemType === 'word' ? 'слово' : 'фраза' }}
           </van-tag>
         </div>

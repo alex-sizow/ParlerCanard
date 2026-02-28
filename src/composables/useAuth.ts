@@ -45,7 +45,7 @@ export function useAuth () {
     const existing = state.users.find(u => u.name.toLowerCase() === name.toLowerCase())
     if (existing) { state.currentUser = existing; return existing }
 
-    const user: User = { id: `student-${Date.now()}`, name, role: 'student', avatar: '🧑‍🎓', joinedAt: new Date().toISOString().split('T')[0] }
+    const user: User = { id: `student-${Date.now()}`, name, role: 'student', avatar: '🧑‍🎓', joinedAt: new Date().toISOString().split('T')[0]! }
     state.users.push(user)
     state.currentUser = user
     return user

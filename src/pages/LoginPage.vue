@@ -78,7 +78,7 @@ function handleLoginAs(userId: string) {
       <span class="login-page__user-avatar">{{ user.avatar }}</span>
       <div class="login-page__user-info">
         <span class="text-body" style="font-weight: 500;">{{ user.name }}</span>
-        <van-tag :type="user.role === 'teacher' ? 'warning' : 'primary'" round size="mini">
+        <van-tag :type="user.role === 'teacher' ? 'warning' : 'primary'" round size="medium">
           {{ user.role }}
         </van-tag>
       </div>
