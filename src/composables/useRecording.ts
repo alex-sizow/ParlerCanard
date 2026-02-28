@@ -1,6 +1,6 @@
 import { ref, readonly, shallowRef } from 'vue'
 import { initModel, createRecognizerSession, type VoskWord } from './useVoskEngine'
-import { startPitchTracking, type PitchPoint } from './usePitchAnalysis'
+import { startPitchTracking, type PitchPoint } from '@/utils/pitchAnalysis'
 
 export type { VoskWord, PitchPoint }
 

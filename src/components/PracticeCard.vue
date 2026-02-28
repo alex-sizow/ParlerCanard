@@ -84,18 +84,4 @@ const emit = defineEmits<{ listen: []; record: []; select: [] }>()
   display: flex;
   gap: var(--space-sm);
 }
-
-/* Check icon pop animation */
-.check-pop-enter-active {
-  animation: bounce-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.check-pop-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.check-pop-leave-to {
-  opacity: 0;
-  transform: scale(0.5);
-}
 </style>

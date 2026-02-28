@@ -1,4 +1,5 @@
 import { ref, readonly } from 'vue'
+import { delay } from '@/utils/helpers'
 
 /**
  * Cached voices list — populated once the browser finishes loading voices.
@@ -68,10 +69,6 @@ function warmup () {
   u.volume = 0
   u.lang = 'fr-FR'
   window.speechSynthesis.speak(u)
-}
-
-function delay (ms: number): Promise<void> {
-  return new Promise(r => setTimeout(r, ms))
 }
 
 export function useAudio () {

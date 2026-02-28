@@ -11,16 +11,7 @@ import PracticePopup from '@/components/PracticePopup.vue'
 
 const { wordDifficulty, filteredWords, wordCounts } = useDifficulty()
 const { markWordLearned, isWordLearned } = useProgress()
-
-const {
-  activeItem, showPractice, score, wordResults,
-  accuracyScore, confidenceScore, intonationScore, fluencyScore,
-  selectItem, closePractice, listenTo, handleRecord,
-  isRecording, isProcessing, transcript, isSupported,
-  recordedBlob, mediaStream, analyserNode, isPlaying, isSpeaking,
-  playRecording, stopPlayback,
-  isModelLoading, modelLoadProgress,
-} = usePracticeSession<Word>({
+const { isSupported, selectItem, listenTo } = usePracticeSession<Word>({
   itemType: 'word',
   markCompleted: markWordLearned,
 })
@@ -51,13 +42,7 @@ const {
     </div>
   </div>
 
-  <PracticePopup v-model:show="showPractice" :item="activeItem" :score="score" :word-results="wordResults"
-    :accuracy-score="accuracyScore" :confidence-score="confidenceScore" :intonation-score="intonationScore"
-    :fluency-score="fluencyScore" :is-recording="isRecording" :is-processing="isProcessing" :is-supported="isSupported"
-    :recorded-blob="recordedBlob" :media-stream="mediaStream" :analyser-node="analyserNode" :transcript="transcript"
-    :is-playing="isPlaying" :is-speaking="isSpeaking" :is-model-loading="isModelLoading"
-    :model-load-progress="modelLoadProgress" @close="closePractice" @listen="activeItem && listenTo(activeItem.text)"
-    @record="handleRecord" @play-recording="playRecording" @stop-playback="stopPlayback" />
+  <PracticePopup />
 </div>
 </template>
 
@@ -82,28 +67,5 @@ const {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-}
-
-/* Card list transitions */
-.card-list-enter-active {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-list-leave-active {
-  transition: all 0.3s ease;
-}
-
-.card-list-enter-from {
-  opacity: 0;
-  transform: translateY(20px) scale(0.96);
-}
-
-.card-list-leave-to {
-  opacity: 0;
-  transform: translateX(-100%) scale(0.9);
-}
-
-.card-list-move {
-  transition: transform 0.35s ease;
 }
 </style>

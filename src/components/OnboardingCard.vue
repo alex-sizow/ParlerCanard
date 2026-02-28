@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { usePersistence } from '@/composables/usePersistence'
 
-const STORAGE_KEY = 'parlercanard-onboarding-dismissed'
-const isDismissed = ref(localStorage.getItem(STORAGE_KEY) === 'true')
+const state = usePersistence('parlercanard-onboarding', { dismissed: false })
+const isDismissed = ref(state.dismissed)
 const steps = [
   { action: '👂 Listen', desc: 'to the native pronunciation' },
   { action: '🎤 Record', desc: 'your own duck... er, French accent' },
@@ -12,7 +13,7 @@ const steps = [
 
 function dismiss() {
   isDismissed.value = true
-  localStorage.setItem(STORAGE_KEY, 'true')
+  state.dismissed = true
 }
 </script>
 

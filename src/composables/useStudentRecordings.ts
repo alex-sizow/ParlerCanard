@@ -1,5 +1,6 @@
 import { computed } from 'vue'
 import { usePersistence } from './usePersistence'
+import { blobToBase64, base64ToBlob } from '@/utils/helpers'
 import type { Difficulty, ItemType } from '@/data/types'
 
 export interface StudentRecording {
@@ -25,21 +26,6 @@ interface RecordingsState {
 const state = usePersistence<RecordingsState>('parler-student-recordings', {
   recordings: [],
 })
-
-const blobToBase64 = (blob: Blob): Promise<string> => new Promise((resolve, reject) => {
-  const r = new FileReader()
-  r.onloadend = () => resolve(r.result as string)
-  r.onerror = reject
-  r.readAsDataURL(blob)
-})
-
-function base64ToBlob (dataUrl: string): Blob {
-  const [header = '', data = ''] = dataUrl.split(',')
-  const mime = header.match(/:(.*?);/)?.[1] ?? 'audio/webm'
-  const binary = atob(data)
-  const bytes = Uint8Array.from(binary, c => c.charCodeAt(0))
-  return new Blob([bytes], { type: mime })
-}
 
 export function useStudentRecordings () {
   const recordings = computed(() => state.recordings)

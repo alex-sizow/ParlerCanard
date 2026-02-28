@@ -10,16 +10,7 @@ import PracticePopup from '@/components/PracticePopup.vue'
 
 const { sentenceDifficulty, filteredSentences, sentenceCounts } = useDifficulty()
 const { markSentenceCompleted, isSentenceCompleted } = useProgress()
-
-const {
-  activeItem, showPractice, score, wordResults,
-  accuracyScore, confidenceScore, intonationScore, fluencyScore,
-  selectItem, closePractice, listenTo, handleRecord,
-  isRecording, isProcessing, transcript, isSupported,
-  recordedBlob, mediaStream, analyserNode, isPlaying, isSpeaking,
-  playRecording, stopPlayback,
-  isModelLoading, modelLoadProgress,
-} = usePracticeSession<Sentence>({
+const { activeItem, selectItem, listenTo } = usePracticeSession<Sentence>({
   itemType: 'sentence',
   markCompleted: markSentenceCompleted,
   speakRate: 0.75,
@@ -73,14 +64,7 @@ const {
     </div>
   </div>
 
-  <PracticePopup v-model:show="showPractice" :item="activeItem" :score="score" :word-results="wordResults"
-    :accuracy-score="accuracyScore" :confidence-score="confidenceScore" :intonation-score="intonationScore"
-    :fluency-score="fluencyScore" :is-recording="isRecording" :is-processing="isProcessing" :is-supported="isSupported"
-    :recorded-blob="recordedBlob" :media-stream="mediaStream" :analyser-node="analyserNode" :transcript="transcript"
-    :is-playing="isPlaying" :is-speaking="isSpeaking" :is-model-loading="isModelLoading"
-    :model-load-progress="modelLoadProgress" listen-label="Listen Full Sentence" @close="closePractice"
-    @listen="activeItem && listenTo(activeItem.text)" @record="handleRecord" @play-recording="playRecording"
-    @stop-playback="stopPlayback">
+  <PracticePopup listen-label="Listen Full Sentence">
     <template v-if="activeItem" #extra>
       <div class="phrases-section">
         <h4 class="text-caption" style="margin: 0;">Phrase Breakdown:</h4>
@@ -155,43 +139,6 @@ const {
 .sentence-card__actions {
   display: flex;
   gap: var(--space-sm);
-}
-
-/* Card list transitions */
-.card-list-enter-active {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-list-leave-active {
-  transition: all 0.3s ease;
-}
-
-.card-list-enter-from {
-  opacity: 0;
-  transform: translateY(20px) scale(0.96);
-}
-
-.card-list-leave-to {
-  opacity: 0;
-  transform: translateX(-100%) scale(0.9);
-}
-
-.card-list-move {
-  transition: transform 0.35s ease;
-}
-
-/* Check icon pop animation */
-.check-pop-enter-active {
-  animation: bounce-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.check-pop-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.check-pop-leave-to {
-  opacity: 0;
-  transform: scale(0.5);
 }
 
 .phrases-section {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { WordResult } from '@/composables/usePronunciation'
+import type { WordResult } from '@/utils/pronunciation'
 
 defineProps<{
   results: WordResult[]

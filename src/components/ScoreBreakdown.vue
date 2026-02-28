@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { scoreCssColor } from '@/utils/helpers'
+
 defineProps<{
   accuracy: number
   confidence: number
@@ -12,12 +14,6 @@ const items = [
   { key: 'intonation', label: 'Intonation', icon: '🎵', weight: '20%' },
   { key: 'fluency', label: 'Fluency', icon: '💨', weight: '10%' },
 ] as const
-
-function barColor(value: number): string {
-  if (value >= 85) return 'var(--color-success)'
-  if (value >= 70) return 'var(--color-warning)'
-  return 'var(--color-error)'
-}
 </script>
 
 <template>
@@ -29,7 +25,7 @@ function barColor(value: number): string {
     <div class="score-breakdown__bar-track">
       <div class="score-breakdown__bar-fill" :style="{
         width: `${$props[item.key]}%`,
-        backgroundColor: barColor($props[item.key]),
+        backgroundColor: scoreCssColor($props[item.key]),
         transitionDelay: `${idx * 100}ms`,
       }" />
     </div>

@@ -6,6 +6,7 @@ import type { Word } from '@/data/words'
 import type { DifficultyFilter as DifficultyFilterType } from '@/data/types'
 import type { Difficulty } from '@/data/types'
 import { difficultyColors, difficultyLabels } from '@/data/constants'
+import { countByDifficulty } from '@/utils/helpers'
 import DifficultyFilter from '@/components/DifficultyFilter.vue'
 import { showToast, showDialog } from 'vant'
 
@@ -27,12 +28,7 @@ const filteredWords = computed(() => {
   return teacherWords.value.filter(w => w.difficulty === filterDifficulty.value)
 })
 
-const counts = computed(() => ({
-  all: teacherWords.value.length,
-  beginner: teacherWords.value.filter(w => w.difficulty === 'beginner').length,
-  intermediate: teacherWords.value.filter(w => w.difficulty === 'intermediate').length,
-  advanced: teacherWords.value.filter(w => w.difficulty === 'advanced').length,
-}))
+const counts = computed(() => countByDifficulty(teacherWords.value))
 
 function resetForm() {
   form.value = { text: '', ipa: '', translation: '', difficulty: 'beginner' }

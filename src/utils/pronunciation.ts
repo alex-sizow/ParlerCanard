@@ -1,6 +1,6 @@
-import { scoreColor } from '@/data/constants'
-import { comparePitchContours, type PitchPoint } from './usePitchAnalysis'
-import type { VoskWord } from './useVoskEngine'
+import { scoreColor } from '@/utils/helpers'
+import { comparePitchContours, type PitchPoint } from '@/utils/pitchAnalysis'
+import type { VoskWord } from '@/composables/useVoskEngine'
 
 export interface WordResult {
   word: string

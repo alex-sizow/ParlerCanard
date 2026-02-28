@@ -1,45 +1,22 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from 'vue'
-import type { PracticeItem } from '@/data/types'
-import type { WordResult } from '@/composables/usePronunciation'
+import { usePractice } from '@/composables/usePracticeSession'
 import RecordButton from './RecordButton.vue'
 import ScoreCircle from './ScoreCircle.vue'
 import PhonemeGrid from './PhonemeGrid.vue'
 import AudioVisualizer from './AudioVisualizer.vue'
 import ScoreBreakdown from './ScoreBreakdown.vue'
 
-const props = defineProps<{
-  show: boolean
-  item: PracticeItem | null
-  score: number | null
-  wordResults: WordResult[]
-  accuracyScore: number | null
-  confidenceScore: number | null
-  intonationScore: number | null
-  fluencyScore: number | null
-  isRecording: boolean
-  isProcessing: boolean
-  isSupported: boolean
-  recordedBlob: Blob | null
-  mediaStream: MediaStream | null
-  analyserNode: AnalyserNode | null
-  transcript: string
-  isPlaying: boolean
-  isSpeaking: boolean
-  isModelLoading?: boolean
-  modelLoadProgress?: number
-  listenLabel?: string
-  maxHeight?: string
-}>()
+defineProps<{ listenLabel?: string }>()
 
-const emit = defineEmits<{
-  'update:show': [value: boolean]
-  close: []
-  listen: []
-  record: []
-  playRecording: []
-  stopPlayback: []
-}>()
+const {
+  activeItem: item, show, analysis,
+  isRecording, isProcessing, isSupported,
+  recordedBlob, mediaStream, analyserNode, transcript,
+  isPlaying, isSpeaking,
+  isModelLoading, modelLoadProgress,
+  listen, record, playRecording, stopPlayback, close,
+} = usePractice()
 
 /* ─── Swipe-to-close logic ─── */
 const sheetRef = ref<HTMLElement | null>(null)
@@ -91,14 +68,8 @@ function swipeClose() {
   setTimeout(() => {
     dragOffset.value = 0
     isSwipeClosing.value = false
-    emit('update:show', false)
-    emit('close')
+    close()
   }, 320) // matches .sheet transition duration
-}
-
-function close() {
-  emit('update:show', false)
-  emit('close')
 }
 
 function onOverlayClick() {
@@ -106,7 +77,7 @@ function onOverlayClick() {
 }
 
 // Lock body scroll when open
-watch(() => props.show, (open) => {
+watch(show, (open) => {
   document.body.style.overflow = open ? 'hidden' : ''
 })
 onBeforeUnmount(() => { document.body.style.overflow = '' })
@@ -138,7 +109,7 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
         <p class="text-phonetic sheet__ipa">{{ item.ipa }}</p>
         <p class="text-caption sheet__translation">{{ item.translation }}</p>
 
-        <van-button type="primary" size="small" round icon="volume-o" :loading="isSpeaking" @click="emit('listen')">
+        <van-button type="primary" size="small" round icon="volume-o" :loading="isSpeaking" @click="listen">
           {{ listenLabel ?? 'Listen' }}
         </van-button>
 
@@ -149,11 +120,11 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
 
           <div v-if="isModelLoading" class="sheet__model-loading surface-card">
             <p class="text-caption">Loading speech model (first time only)...</p>
-            <van-progress :percentage="modelLoadProgress ?? 0" stroke-width="6" color="var(--color-primary)" />
+            <van-progress :percentage="modelLoadProgress" stroke-width="6" color="var(--color-primary)" />
           </div>
 
           <RecordButton :is-recording="isRecording" :is-processing="isProcessing" :disabled="!isSupported"
-            @press="emit('record')" />
+            @press="record" />
         </div>
 
         <transition name="result-slide">
@@ -162,18 +133,18 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
             <p v-if="transcript" class="text-body">{{ transcript }}</p>
             <van-button v-if="recordedBlob" type="primary" plain size="small" round
               :icon="isPlaying ? 'pause-circle-o' : 'play-circle-o'" style="margin-top: 8px;"
-              @click="isPlaying ? emit('stopPlayback') : emit('playRecording')">
+              @click="isPlaying ? stopPlayback() : playRecording()">
               {{ isPlaying ? 'Stop' : 'Play My Recording' }}
             </van-button>
           </div>
         </transition>
 
         <transition name="score-pop">
-          <div v-if="score !== null" class="sheet__results">
-            <ScoreCircle :score="score" />
-            <ScoreBreakdown v-if="accuracyScore !== null" :accuracy="accuracyScore!" :confidence="confidenceScore!"
-              :intonation="intonationScore!" :fluency="fluencyScore!" />
-            <PhonemeGrid v-if="wordResults.length > 0" :results="wordResults" />
+          <div v-if="analysis" class="sheet__results">
+            <ScoreCircle :score="analysis.overallScore" />
+            <ScoreBreakdown :accuracy="analysis.accuracyScore" :confidence="analysis.confidenceScore"
+              :intonation="analysis.intonationScore" :fluency="analysis.fluencyScore" />
+            <PhonemeGrid v-if="analysis.wordResults.length > 0" :results="analysis.wordResults" />
           </div>
         </transition>
       </div>

@@ -6,6 +6,7 @@ import { useAudio } from '@/composables/useAudio'
 import type { StudentRecording } from '@/composables/useStudentRecordings'
 import type { DifficultyFilter as DifficultyFilterType } from '@/data/types'
 import { difficultyColors, difficultyLabels, scoreCssColor } from '@/data/constants'
+import { formatDate } from '@/utils/helpers'
 import DifficultyFilter from '@/components/DifficultyFilter.vue'
 import { showToast, showDialog } from 'vant'
 
@@ -39,16 +40,6 @@ const filteredRecordings = computed(() => {
   // Sort by newest first
   return list.sort((a, b) => b.recordedAt - a.recordedAt)
 })
-
-function formatDate(ts: number): string {
-  const d = new Date(ts)
-  return d.toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 
 async function handlePlay(recording: StudentRecording) {
   if (playingId.value === recording.id && isPlaying.value) {
