@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, watch, onBeforeUnmount } from 'vue'
 import type { PracticeItem } from '@/data/types'
 import type { WordResult } from '@/composables/usePronunciation'
 import RecordButton from './RecordButton.vue'
@@ -7,7 +8,7 @@ import PhonemeGrid from './PhonemeGrid.vue'
 import AudioVisualizer from './AudioVisualizer.vue'
 import ScoreBreakdown from './ScoreBreakdown.vue'
 
-defineProps<{
+const props = defineProps<{
   show: boolean
   item: PracticeItem | null
   score: number | null
@@ -39,94 +40,290 @@ const emit = defineEmits<{
   playRecording: []
   stopPlayback: []
 }>()
+
+/* ─── Swipe-to-close logic ─── */
+const sheetRef = ref<HTMLElement | null>(null)
+const dragOffset = ref(0)
+const isDragging = ref(false)
+const isSwipeClosing = ref(false)
+let startY = 0
+let currentY = 0
+
+function onTouchStart(e: TouchEvent) {
+  if (isSwipeClosing.value) return
+  // Only allow drag from the header area (first 48px)
+  const touch = e.touches[0]!
+  const rect = sheetRef.value?.getBoundingClientRect()
+  if (!rect) return
+  const relY = touch.clientY - rect.top
+  if (relY > 52) return // ignore if touch starts below header
+
+  startY = touch.clientY
+  currentY = startY
+  isDragging.value = true
+}
+
+function onTouchMove(e: TouchEvent) {
+  if (!isDragging.value) return
+  currentY = e.touches[0]!.clientY
+  const delta = currentY - startY
+  // Only allow dragging down
+  dragOffset.value = Math.max(0, delta)
+}
+
+function onTouchEnd() {
+  if (!isDragging.value) return
+  isDragging.value = false
+  // If dragged more than 100px, animate slide-out then close
+  if (dragOffset.value > 100) {
+    swipeClose()
+  } else {
+    dragOffset.value = 0
+  }
+}
+
+function swipeClose() {
+  isSwipeClosing.value = true
+  // Animate to full off-screen
+  const sheetHeight = sheetRef.value?.offsetHeight ?? window.innerHeight
+  dragOffset.value = sheetHeight + 40
+  // Wait for the CSS transition to finish, then actually close
+  setTimeout(() => {
+    dragOffset.value = 0
+    isSwipeClosing.value = false
+    emit('update:show', false)
+    emit('close')
+  }, 320) // matches .sheet transition duration
+}
+
+function close() {
+  emit('update:show', false)
+  emit('close')
+}
+
+function onOverlayClick() {
+  close()
+}
+
+// Lock body scroll when open
+watch(() => props.show, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
+onBeforeUnmount(() => { document.body.style.overflow = '' })
 </script>
 
-<template><van-popup :show="show" position="bottom" round :style="{ height: maxHeight ?? '92vh', maxHeight: '92vh' }" closeable
-  class="practice-popup-shell" @update:show="emit('update:show', $event)" @close="emit('close')">
-  <div v-if="item" class="practice-popup">
-    <h2 class="text-h2 practice-popup__title animate-fade-in-up">{{ item.text }}</h2>
-    <p class="text-phonetic practice-popup__ipa animate-fade-in-up" style="animation-delay: 50ms;">{{ item.ipa }}</p>
-    <p class="text-caption practice-popup__translation animate-fade-in-up" style="animation-delay: 100ms;">{{
-      item.translation }}</p>
+<template><!-- Overlay -->
+<Teleport to="body">
+  <transition name="sheet-overlay">
+    <div v-if="show" class="sheet-overlay" @click="onOverlayClick" />
+  </transition>
 
-    <div class="practice-popup__listen-btn animate-scale-in" style="animation-delay: 150ms;">
-      <van-button type="primary" size="small" round icon="volume-o" :loading="isSpeaking" @click="emit('listen')">
-        {{ listenLabel ?? 'Listen' }}
-      </van-button>
-    </div>
+  <transition name="sheet-slide">
+    <div v-if="show" ref="sheetRef" class="sheet"
+      :class="{ 'sheet--dragging': isDragging, 'sheet--swipe-closing': isSwipeClosing }"
+      :style="{ transform: `translateY(${dragOffset}px)` }" @touchstart.passive="onTouchStart"
+      @touchmove.passive="onTouchMove" @touchend="onTouchEnd">
 
-    <slot name="extra" />
-
-    <div class="practice-popup__recorder">
-      <AudioVisualizer :is-active="isRecording" :stream="mediaStream" :analyser="analyserNode" />
-
-      <div v-if="isModelLoading" class="practice-popup__model-loading surface-card animate-fade-in">
-        <p class="text-caption">Loading speech model (first time only)...</p>
-        <van-progress :percentage="modelLoadProgress ?? 0" stroke-width="6" color="var(--color-primary)" />
+      <!-- Header: drag handle + close button -->
+      <div class="sheet__header">
+        <div class="sheet__handle" />
+        <button class="sheet__close" aria-label="Close" @click="close">
+          <van-icon name="cross" size="18" />
+        </button>
       </div>
 
-      <RecordButton :is-recording="isRecording" :is-processing="isProcessing" :disabled="!isSupported"
-        @press="emit('record')" />
-    </div>
+      <!-- Scrollable content -->
+      <div v-if="item" class="sheet__body">
+        <h2 class="text-h2 sheet__title">{{ item.text }}</h2>
+        <p class="text-phonetic sheet__ipa">{{ item.ipa }}</p>
+        <p class="text-caption sheet__translation">{{ item.translation }}</p>
 
-    <transition name="result-slide">
-      <div v-if="transcript || recordedBlob" class="practice-popup__transcript surface-card">
-        <p v-if="transcript" class="text-caption">You said:</p>
-        <p v-if="transcript" class="text-body">{{ transcript }}</p>
-        <van-button v-if="recordedBlob" type="primary" plain size="small" round
-          :icon="isPlaying ? 'pause-circle-o' : 'play-circle-o'" style="margin-top: 8px;"
-          @click="isPlaying ? emit('stopPlayback') : emit('playRecording')">
-          {{ isPlaying ? 'Stop' : 'Play My Recording' }}
+        <van-button type="primary" size="small" round icon="volume-o" :loading="isSpeaking" @click="emit('listen')">
+          {{ listenLabel ?? 'Listen' }}
         </van-button>
-      </div>
-    </transition>
 
-    <transition name="score-pop">
-      <div v-if="score !== null" class="practice-popup__results">
-        <ScoreCircle :score="score" />
-        <ScoreBreakdown v-if="accuracyScore !== null" :accuracy="accuracyScore!" :confidence="confidenceScore!"
-          :intonation="intonationScore!" :fluency="fluencyScore!" />
-        <PhonemeGrid v-if="wordResults.length > 0" :results="wordResults" />
+        <slot name="extra" />
+
+        <div class="sheet__recorder">
+          <AudioVisualizer :is-active="isRecording" :stream="mediaStream" :analyser="analyserNode" />
+
+          <div v-if="isModelLoading" class="sheet__model-loading surface-card">
+            <p class="text-caption">Loading speech model (first time only)...</p>
+            <van-progress :percentage="modelLoadProgress ?? 0" stroke-width="6" color="var(--color-primary)" />
+          </div>
+
+          <RecordButton :is-recording="isRecording" :is-processing="isProcessing" :disabled="!isSupported"
+            @press="emit('record')" />
+        </div>
+
+        <transition name="result-slide">
+          <div v-if="transcript || recordedBlob" class="sheet__transcript surface-card">
+            <p v-if="transcript" class="text-caption">You said:</p>
+            <p v-if="transcript" class="text-body">{{ transcript }}</p>
+            <van-button v-if="recordedBlob" type="primary" plain size="small" round
+              :icon="isPlaying ? 'pause-circle-o' : 'play-circle-o'" style="margin-top: 8px;"
+              @click="isPlaying ? emit('stopPlayback') : emit('playRecording')">
+              {{ isPlaying ? 'Stop' : 'Play My Recording' }}
+            </van-button>
+          </div>
+        </transition>
+
+        <transition name="score-pop">
+          <div v-if="score !== null" class="sheet__results">
+            <ScoreCircle :score="score" />
+            <ScoreBreakdown v-if="accuracyScore !== null" :accuracy="accuracyScore!" :confidence="confidenceScore!"
+              :intonation="intonationScore!" :fluency="fluencyScore!" />
+            <PhonemeGrid v-if="wordResults.length > 0" :results="wordResults" />
+          </div>
+        </transition>
       </div>
-    </transition>
-  </div>
-</van-popup>
+    </div>
+  </transition>
+</Teleport>
 </template>
 
 <style scoped>
-.practice-popup {
-  padding: var(--space-xl) var(--space-lg);
-  padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px) + 24px);
+/* ─── Overlay ─── */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sheet-overlay-enter-active {
+  transition: opacity 0.35s ease;
+}
+
+.sheet-overlay-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.sheet-overlay-enter-from,
+.sheet-overlay-leave-to {
+  opacity: 0;
+}
+
+/* ─── Sheet container ─── */
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2001;
+  height: 88dvh;
+  max-height: 88dvh;
+  background: var(--color-white);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.12);
+  will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  /* Center on desktop */
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.sheet--dragging {
+  transition: none !important;
+}
+
+.sheet--swipe-closing {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 1, 1) !important;
+}
+
+.sheet-slide-enter-active {
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.sheet-slide-leave-active {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.sheet-slide-enter-from,
+.sheet-slide-leave-to {
+  transform: translateY(100%) !important;
+}
+
+/* ─── Header ─── */
+.sheet__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px 8px;
+  touch-action: none;
+  /* prevent browser pull-to-refresh */
+  cursor: grab;
+  user-select: none;
+}
+
+.sheet__header:active {
+  cursor: grabbing;
+}
+
+.sheet__handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-lavender);
+  opacity: 0.55;
+}
+
+.sheet__close {
+  position: absolute;
+  right: 14px;
+  top: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sheet__close:active {
+  transform: scale(0.85);
+  background: var(--color-lavender-light);
+}
+
+/* ─── Scrollable body (fixed height, never shifts) ─── */
+.sheet__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--space-sm) var(--space-lg) calc(var(--space-xl) + env(safe-area-inset-bottom, 0px) + 24px);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-md);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  height: 100%;
-  /* Prevent layout shift — always fill the popup height */
-  min-height: 0;
 }
 
-.practice-popup__title {
+.sheet__title {
   margin: 0;
   text-align: center;
 }
 
-.practice-popup__ipa {
+.sheet__ipa {
   margin: 0;
   color: var(--color-primary);
 }
 
-.practice-popup__translation {
-  margin: 0 0 var(--space-sm);
+.sheet__translation {
+  margin: 0 0 var(--space-xs);
 }
 
-.practice-popup__listen-btn {
-  animation-fill-mode: both;
-}
-
-.practice-popup__recorder {
+.sheet__recorder {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -135,7 +332,7 @@ const emit = defineEmits<{
   margin-top: var(--space-sm);
 }
 
-.practice-popup__model-loading {
+.sheet__model-loading {
   width: 100%;
   padding: var(--space-sm) var(--space-md);
   display: flex;
@@ -143,12 +340,12 @@ const emit = defineEmits<{
   gap: var(--space-xs);
 }
 
-.practice-popup__transcript {
+.sheet__transcript {
   width: 100%;
   padding: var(--space-md);
 }
 
-.practice-popup__results {
+.sheet__results {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -156,7 +353,7 @@ const emit = defineEmits<{
   width: 100%;
 }
 
-/* Result slide-in transition */
+/* ─── Inner transitions ─── */
 .result-slide-enter-active {
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -175,7 +372,6 @@ const emit = defineEmits<{
   transform: translateY(-8px);
 }
 
-/* Score pop-in transition */
 .score-pop-enter-active {
   animation: bounce-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }

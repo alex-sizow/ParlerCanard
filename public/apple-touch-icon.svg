@@ -1,4 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
   <rect width="180" height="180" rx="28" fill="#d4a017"/>
-  <text x="90" y="122" text-anchor="middle" font-size="110" font-family="sans-serif">🦆</text>
+  <!-- Duck body -->
+  <ellipse cx="90" cy="113" rx="49" ry="34" fill="#fff" opacity="0.95"/>
+  <!-- Duck wing -->
+  <ellipse cx="77" cy="108" rx="26" ry="17" fill="#e8e0d0" transform="rotate(-8 77 108)"/>
+  <!-- Duck head -->
+  <circle cx="118" cy="73" r="21" fill="#1a6e3a"/>
+  <!-- Duck eye -->
+  <circle cx="124" cy="69" r="3.8" fill="#fff"/>
+  <circle cx="125" cy="68.5" r="1.9" fill="#222"/>
+  <!-- Duck beak -->
+  <path d="M137 77 Q149 73 149 79 Q149 85 137 82 Z" fill="#e8940a"/>
+  <!-- Duck neck ring -->
+  <path d="M105 89 Q111 83 126 85" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+  <!-- Duck tail -->
+  <path d="M41 103 Q30 92 35 86 Q41 92 47 99" fill="#d4c9b0"/>
+  <!-- Water ripples -->
+  <ellipse cx="90" cy="143" rx="52" ry="7.5" fill="#3d8bd4" opacity="0.35"/>
+  <ellipse cx="90" cy="139" rx="44" ry="4.5" fill="#5ba3e6" opacity="0.25"/>
 </svg>

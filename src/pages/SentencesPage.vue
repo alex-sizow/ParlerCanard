@@ -78,9 +78,9 @@ const {
     :fluency-score="fluencyScore" :is-recording="isRecording" :is-processing="isProcessing" :is-supported="isSupported"
     :recorded-blob="recordedBlob" :media-stream="mediaStream" :analyser-node="analyserNode" :transcript="transcript"
     :is-playing="isPlaying" :is-speaking="isSpeaking" :is-model-loading="isModelLoading"
-    :model-load-progress="modelLoadProgress" listen-label="Listen Full Sentence" max-height="92vh"
-    @close="closePractice" @listen="activeItem && listenTo(activeItem.text)" @record="handleRecord"
-    @play-recording="playRecording" @stop-playback="stopPlayback">
+    :model-load-progress="modelLoadProgress" listen-label="Listen Full Sentence" @close="closePractice"
+    @listen="activeItem && listenTo(activeItem.text)" @record="handleRecord" @play-recording="playRecording"
+    @stop-playback="stopPlayback">
     <template v-if="activeItem" #extra>
       <div class="phrases-section">
         <h4 class="text-caption" style="margin: 0;">Phrase Breakdown:</h4>

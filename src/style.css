@@ -331,11 +331,7 @@ body {
   transform: scale(0.85) !important;
 }
 
-/* Practice popup: fixed height, no resize */
-.practice-popup-shell.van-popup--bottom {
-  display: flex;
-  flex-direction: column;
-}
+/* Practice popup: uses custom sheet, no van-popup overrides needed */
 
 /* ─── Duck Tabbar Top Wave ─── */
 .van-tabbar::before {

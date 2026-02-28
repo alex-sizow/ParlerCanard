@@ -1,4 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <rect width="512" height="512" rx="64" fill="#d4a017"/>
-  <text x="256" y="340" text-anchor="middle" font-size="300" font-family="sans-serif">🦆</text>
+  <!-- Duck body -->
+  <ellipse cx="256" cy="320" rx="138" ry="96" fill="#fff" opacity="0.95"/>
+  <!-- Duck wing -->
+  <ellipse cx="218" cy="306" rx="75" ry="48" fill="#e8e0d0" transform="rotate(-8 218 306)"/>
+  <!-- Duck head -->
+  <circle cx="336" cy="208" r="58" fill="#1a6e3a"/>
+  <!-- Duck eye -->
+  <circle cx="352" cy="197" r="10.5" fill="#fff"/>
+  <circle cx="354" cy="196" r="5.5" fill="#222"/>
+  <!-- Eye glint -->
+  <circle cx="356" cy="194" r="2" fill="#fff" opacity="0.8"/>
+  <!-- Duck beak -->
+  <path d="M390 218 Q422 208 422 224 Q422 240 390 234 Z" fill="#e8940a"/>
+  <path d="M390 225 Q410 222 410 226" stroke="#c77808" stroke-width="1.5" fill="none"/>
+  <!-- Duck neck ring -->
+  <path d="M298 250 Q316 234 358 240" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <!-- Duck tail -->
+  <path d="M118 293 Q85 261 100 244 Q116 262 132 280" fill="#d4c9b0"/>
+  <!-- Tail feather detail -->
+  <path d="M108 280 Q92 268 100 258" stroke="#c4b8a0" stroke-width="2" fill="none"/>
+  <!-- Water ripples -->
+  <ellipse cx="256" cy="405" rx="150" ry="22" fill="#3d8bd4" opacity="0.35"/>
+  <ellipse cx="256" cy="396" rx="128" ry="14" fill="#5ba3e6" opacity="0.25"/>
+  <ellipse cx="256" cy="415" rx="110" ry="10" fill="#3d8bd4" opacity="0.18"/>
 </svg>
