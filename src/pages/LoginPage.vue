@@ -7,7 +7,7 @@ import { showToast } from 'vant'
 
 const router = useRouter()
 const { allUsers, register, registerFromTelegram, loginAs } = useAuth()
-const { isTelegramEnv, telegramUser, displayName: tgDisplayName } = useTelegram()
+const { isTelegramEnv, telegramUser } = useTelegram()
 
 const studentName = ref('')
 const showExisting = ref(false)
