@@ -57,10 +57,10 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const { isAuthenticated, isTeacher, registerFromTelegram } = useAuth()
-  const { isTelegramEnv, telegramUser } = useTelegram()
+  const { isTelegramEnv, isValidated, telegramUser } = useTelegram()
 
-  // Auto-login from Telegram if not yet authenticated
-  if (!isAuthenticated.value && isTelegramEnv.value && telegramUser.value) {
+  // Auto-login from Telegram if not yet authenticated (only if validated)
+  if (!isAuthenticated.value && isTelegramEnv.value && telegramUser.value && isValidated.value) {
     registerFromTelegram(telegramUser.value)
   }
 

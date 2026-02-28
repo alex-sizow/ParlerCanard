@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { usePersistence } from './usePersistence'
+import { useCloudPersistence } from './useCloudPersistence'
 import { achievements } from '@/data/achievements'
 import type { AchievementStats } from '@/data/achievements'
 import { useProgress } from './useProgress'
@@ -12,7 +12,7 @@ interface AchievementsState {
   notifiedIds: string[]
 }
 
-const state = usePersistence<AchievementsState>('parler-achievements', {
+const state = useCloudPersistence<AchievementsState>('parler-achievements', {
   unlocked: [],
   streakDays: 0,
   bestStreak: 0,

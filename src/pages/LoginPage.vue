@@ -7,14 +7,14 @@ import { showToast } from 'vant'
 
 const router = useRouter()
 const { allUsers, register, registerFromTelegram, loginAs } = useAuth()
-const { isTelegramEnv, telegramUser } = useTelegram()
+const { isTelegramEnv, isValidated, isValidating, telegramUser } = useTelegram()
 
 const studentName = ref('')
 const showExisting = ref(false)
 const telegramLoading = ref(false)
 
 onMounted(() => {
-  if (isTelegramEnv.value && telegramUser.value) {
+  if (isTelegramEnv.value && telegramUser.value && isValidated.value) {
     telegramLoading.value = true
     const user = registerFromTelegram(telegramUser.value)
     showToast({ message: `Welcome, ${user.name}! 🦆`, type: 'success' })
@@ -45,9 +45,11 @@ function handleLoginAs(userId: string) {
 <template>
 <div class="login-page">
   <!-- Telegram auto-login spinner -->
-  <div v-if="telegramLoading" class="login-page__tg-loading">
+  <div v-if="telegramLoading || isValidating" class="login-page__tg-loading">
     <div class="login-page__logo duck-float">🦆</div>
-    <van-loading size="24px" color="var(--color-primary)">Logging in via Telegram...</van-loading>
+    <van-loading size="24px" color="var(--color-primary)">
+      {{ isValidating ? 'Verifying Telegram session...' : 'Logging in via Telegram...' }}
+    </van-loading>
   </div>
 
   <template v-else>

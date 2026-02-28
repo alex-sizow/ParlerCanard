@@ -1,12 +1,12 @@
 import { computed } from 'vue'
-import { usePersistence } from './usePersistence'
+import { useCloudPersistence } from './useCloudPersistence'
 import type { Word } from '@/data/words'
 
 interface TeacherWordsState {
   words: Word[]
 }
 
-const state = usePersistence<TeacherWordsState>('parler-teacher-words', {
+const state = useCloudPersistence<TeacherWordsState>('parler-teacher-words', {
   words: [],
 })
 

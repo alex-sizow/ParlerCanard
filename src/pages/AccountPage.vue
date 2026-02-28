@@ -12,14 +12,35 @@ import StatsGrid from '@/components/StatsGrid.vue'
 import { scoreCssColor } from '@/data/constants'
 import { showDialog } from 'vant'
 import { usePwa } from '@/composables/usePwa'
+import { useCloudSyncStatus } from '@/composables/useCloudPersistence'
+import { useTelegram } from '@/composables/useTelegram'
 
 const router = useRouter()
 const { currentUser, isTeacher, allUsers, logout } = useAuth()
 const { learnedWords, completedSentences, attempts, getAverageAccuracy, getBestAccuracy, getAccuracyTrend } = useProgress()
 const { streakDays, bestStreak, isUnlocked } = useAchievements()
 const { canInstall, isInstalled, install } = usePwa()
+const { syncStatus, lastSyncTime } = useCloudSyncStatus()
+const { isTelegramEnv } = useTelegram()
 
 const isTelegramUser = computed(() => !!currentUser.value?.telegramId)
+
+const syncLabel = computed(() => {
+  if (!isTelegramEnv.value) return ''
+  switch (syncStatus.value) {
+    case 'loading': return 'Loading data...'
+    case 'syncing': return 'Syncing...'
+    case 'synced': {
+      if (!lastSyncTime.value) return 'Synced'
+      const ago = Math.round((Date.now() - lastSyncTime.value) / 1000)
+      if (ago < 60) return 'Synced just now'
+      if (ago < 3600) return `Synced ${Math.round(ago / 60)}m ago`
+      return `Synced ${Math.round(ago / 3600)}h ago`
+    }
+    case 'error': return 'Sync failed'
+    default: return ''
+  }
+})
 
 const memberSince = computed(() => {
   if (!currentUser.value) return ''
@@ -80,12 +101,8 @@ async function handleLogout() {
     <!-- Profile Card -->
     <div class="profile-card surface-card-elevated">
       <div class="profile-card__avatar-wrap">
-        <img
-          v-if="currentUser?.telegramPhotoUrl"
-          :src="currentUser.telegramPhotoUrl"
-          :alt="currentUser.name"
-          class="profile-card__photo"
-        />
+        <img v-if="currentUser?.telegramPhotoUrl" :src="currentUser.telegramPhotoUrl" :alt="currentUser.name"
+          class="profile-card__photo" />
         <span v-else class="profile-card__avatar">
           {{ currentUser?.avatar ?? '👤' }}
         </span>
@@ -105,6 +122,21 @@ async function handleLogout() {
           @{{ currentUser.telegramUsername }}
         </p>
       </div>
+    </div>
+
+    <!-- Cloud Sync Status -->
+    <div v-if="isTelegramEnv" class="sync-status surface-card">
+      <span class="sync-status__icon">
+        {{ syncStatus === 'synced' ? '☁️' : syncStatus === 'error' ? '⚠️' : '🔄' }}
+      </span>
+      <div class="sync-status__info">
+        <span class="sync-status__label">Telegram Cloud Sync</span>
+        <span class="text-caption">{{ syncLabel }}</span>
+      </div>
+      <van-tag :type="syncStatus === 'synced' ? 'success' : syncStatus === 'error' ? 'danger' : 'primary'" round
+        size="medium">
+        {{ syncStatus === 'synced' ? 'OK' : syncStatus === 'error' ? 'Error' : '...' }}
+      </van-tag>
     </div>
 
     <!-- Overall Progress -->
@@ -361,5 +393,28 @@ async function handleLogout() {
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
   opacity: 0.7;
+}
+
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+}
+
+.sync-status__icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.sync-status__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sync-status__label {
+  font-size: 13px;
+  font-weight: 600;
 }
 </style>

@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { usePersistence } from './usePersistence'
+import { useCloudPersistence } from './useCloudPersistence'
 import type { TelegramUser } from './useTelegram'
 
 export type UserRole = 'student' | 'teacher'
@@ -20,6 +20,16 @@ interface AuthState {
   users: User[]
 }
 
+/** Telegram usernames that automatically get teacher role */
+const TEACHER_USERNAMES = new Set([
+  'svetalitvinova',
+  'sizifalex',
+])
+
+function isTeacherUsername (username?: string): boolean {
+  return !!username && TEACHER_USERNAMES.has(username.toLowerCase())
+}
+
 /** Pre-seeded teacher account */
 const TEACHER_SVETLANA: User = {
   id: 'teacher-svetlana',
@@ -29,7 +39,7 @@ const TEACHER_SVETLANA: User = {
   joinedAt: '2025-09-01',
 }
 
-const state = usePersistence<AuthState>('parler-auth', {
+const state = useCloudPersistence<AuthState>('parler-auth', {
   currentUser: null,
   users: [TEACHER_SVETLANA],
 }, (loaded) => {
@@ -65,6 +75,8 @@ export function useAuth () {
       ? `${tgUser.first_name} ${tgUser.last_name}`
       : tgUser.first_name
 
+    const shouldBeTeacher = isTeacherUsername(tgUser.username)
+
     // Find by telegramId first (stable)
     const existing = state.users.find(u => u.telegramId === tgId)
     if (existing) {
@@ -72,6 +84,11 @@ export function useAuth () {
       existing.name = displayName
       existing.telegramUsername = tgUser.username
       existing.telegramPhotoUrl = tgUser.photo_url
+      // Promote to teacher if username is in the whitelist
+      if (shouldBeTeacher && existing.role !== 'teacher') {
+        existing.role = 'teacher'
+        existing.avatar = '👩‍🏫'
+      }
       state.currentUser = existing
       return existing
     }
@@ -79,8 +96,8 @@ export function useAuth () {
     const user: User = {
       id: `tg-${tgId}`,
       name: displayName,
-      role: 'student',
-      avatar: '🧑‍🎓',
+      role: shouldBeTeacher ? 'teacher' : 'student',
+      avatar: shouldBeTeacher ? '👩‍🏫' : '🧑‍🎓',
       joinedAt: new Date().toISOString().split('T')[0]!,
       telegramId: tgId,
       telegramUsername: tgUser.username,

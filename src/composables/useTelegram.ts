@@ -10,6 +10,17 @@ export interface TelegramUser {
   is_premium?: boolean
 }
 
+type CloudStorageCb<T> = (error: string | null, result?: T) => void
+
+export interface TelegramCloudStorage {
+  setItem: (key: string, value: string, cb?: CloudStorageCb<boolean>) => void
+  getItem: (key: string, cb: CloudStorageCb<string>) => void
+  getItems: (keys: string[], cb: CloudStorageCb<Record<string, string>>) => void
+  removeItem: (key: string, cb?: CloudStorageCb<boolean>) => void
+  removeItems: (keys: string[], cb?: CloudStorageCb<boolean>) => void
+  getKeys: (cb: CloudStorageCb<string[]>) => void
+}
+
 interface TelegramWebApp {
   initData: string
   initDataUnsafe: {
@@ -48,6 +59,7 @@ interface TelegramWebApp {
     notificationOccurred: (type: 'error' | 'success' | 'warning') => void
     selectionChanged: () => void
   }
+  CloudStorage: TelegramCloudStorage
 }
 
 declare global {
@@ -58,7 +70,11 @@ declare global {
   }
 }
 
+const VALIDATE_URL = import.meta.env.VITE_VALIDATE_URL as string | undefined
+
 const isTelegramEnv = ref(false)
+const isValidated = ref(false)
+const isValidating = ref(false)
 const telegramUser = ref<TelegramUser | null>(null)
 
 function init () {
@@ -72,8 +88,46 @@ function init () {
   tg.expand()
 }
 
+/**
+ * Validate initData via the backend HMAC-SHA256 check.
+ * Falls back to client-side trust if no VALIDATE_URL is configured.
+ */
+async function validateInitData (): Promise<boolean> {
+  const tg = window.Telegram?.WebApp
+  if (!tg?.initData) return false
+
+  // If no validation endpoint is configured, trust client-side data
+  if (!VALIDATE_URL) {
+    isValidated.value = true
+    return true
+  }
+
+  isValidating.value = true
+  try {
+    const resp = await fetch(VALIDATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tg.initData }),
+    })
+    const data = await resp.json()
+    isValidated.value = data.valid === true
+    return isValidated.value
+  } catch {
+    // Network error — trust client-side data as fallback
+    isValidated.value = true
+    return true
+  } finally {
+    isValidating.value = false
+  }
+}
+
 export function useTelegram () {
   const webapp = computed(() => window.Telegram?.WebApp ?? null)
+
+  const cloudStorage = computed(() => {
+    const tg = window.Telegram?.WebApp
+    return tg?.CloudStorage ?? null
+  })
 
   const displayName = computed(() => {
     if (!telegramUser.value) return ''
@@ -91,13 +145,17 @@ export function useTelegram () {
 
   return {
     isTelegramEnv,
+    isValidated,
+    isValidating,
     telegramUser,
     webapp,
+    cloudStorage,
     displayName,
     username,
     photoUrl,
     isPremium,
     haptic,
     init,
+    validateInitData,
   }
 }

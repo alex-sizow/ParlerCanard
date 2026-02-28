@@ -1,5 +1,5 @@
 import { toRefs } from 'vue'
-import { usePersistence } from './usePersistence'
+import { useCloudPersistence } from './useCloudPersistence'
 
 interface ProgressState {
   learnedWords: string[]
@@ -9,12 +9,20 @@ interface ProgressState {
   lastPracticeDate: string | null
 }
 
-const state = usePersistence<ProgressState>('parler-progress', {
+const MAX_CLOUD_ATTEMPTS = 500
+
+const state = useCloudPersistence<ProgressState>('parler-progress', {
   learnedWords: [],
   completedSentences: [],
   attempts: [],
   totalSessions: 0,
   lastPracticeDate: null,
+}, (loaded) => {
+  // Cap attempts array to keep CloudStorage size manageable
+  if (loaded.attempts.length > MAX_CLOUD_ATTEMPTS) {
+    loaded.attempts = loaded.attempts.slice(-MAX_CLOUD_ATTEMPTS)
+  }
+  return loaded
 })
 
 export function useProgress () {
