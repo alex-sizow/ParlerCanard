@@ -48,7 +48,7 @@ const categoryColors: Record<string, string> = {
 
 <template>
 <div class="phonemes-page">
-  <van-nav-bar title="Phoneme Library" :border="false" />
+  <van-nav-bar title="🦆 Phoneme Library" :border="false" />
 
   <div class="phonemes-page__content">
     <!-- Category Filter -->

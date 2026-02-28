@@ -91,7 +91,7 @@ const filterLabelsWithAll = { all: 'Все уровни', ...difficultyLabels }
 
 <template>
 <div class="teacher-recordings">
-  <van-nav-bar title="Записи учеников" :border="false" />
+  <van-nav-bar title="🦆 Записи учеников" :border="false" />
 
   <div v-if="!isTeacher" class="teacher-recordings__denied">
     <van-empty description="Доступ только для преподавателя" image="error" />

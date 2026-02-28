@@ -12,10 +12,10 @@ const { streakDays, bestStreak, isUnlocked } = useAchievements()
 const { learnedWords, completedSentences, attempts, getAverageAccuracy } = useProgress()
 
 const stats = computed(() => [
-  { label: 'Words Learned', value: learnedWords.value.length, icon: '📝' },
+  { label: 'Words Learned', value: learnedWords.value.length, icon: '🪶' },
   { label: 'Sentences Done', value: completedSentences.value.length, icon: '💬' },
-  { label: 'Total Attempts', value: attempts.value.length, icon: '🎯' },
-  { label: 'Avg Accuracy', value: `${getAverageAccuracy()}%`, icon: '📊' },
+  { label: 'Total Attempts', value: attempts.value.length, icon: '🦆' },
+  { label: 'Avg Accuracy', value: `${getAverageAccuracy()}%`, icon: '🎯' },
 ])
 
 const categoryLabels: Record<AchievementCategory, string> = {
@@ -50,7 +50,7 @@ const unlockedCount = computed(() =>
 
 <template>
 <div class="achievements-page">
-  <van-nav-bar title="Progress & Achievements" :border="false" />
+  <van-nav-bar title="🦆 Progress & Achievements" :border="false" />
 
   <div class="achievements-page__content">
     <!-- Streak -->

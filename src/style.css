@@ -10,20 +10,21 @@
 
 /* ─── Design Tokens ─── */
 :root {
-  /* Colors — French-inspired palette */
-  --color-primary: oklch(0.55 0.15 250);       /* French Blue */
-  --color-primary-light: oklch(0.70 0.10 250);  /* Lighter blue */
-  --color-cream: oklch(0.95 0.02 85);           /* Soft Cream background */
-  --color-lavender: oklch(0.75 0.05 280);       /* Lavender Gray */
-  --color-lavender-light: oklch(0.88 0.03 280); /* Light Lavender */
-  --color-accent: oklch(0.65 0.18 15);          /* Vibrant Rose */
-  --color-success: oklch(0.70 0.15 145);        /* Green */
-  --color-warning: oklch(0.75 0.12 85);         /* Yellow */
+  /* Colors — Duck-inspired palette 🦆 */
+  --color-primary: oklch(0.72 0.16 85);         /* Duck Gold */
+  --color-primary-light: oklch(0.82 0.12 85);   /* Lighter gold */
+  --color-primary-dark: oklch(0.58 0.14 85);    /* Deeper gold */
+  --color-cream: oklch(0.96 0.03 90);           /* Warm Cream (feather white) */
+  --color-lavender: oklch(0.65 0.06 180);       /* Teal-Gray (mallard neck) */
+  --color-lavender-light: oklch(0.88 0.03 90);  /* Light Warm Gray */
+  --color-accent: oklch(0.68 0.19 55);          /* Duck Bill Orange */
+  --color-success: oklch(0.52 0.12 165);        /* Mallard Green */
+  --color-warning: oklch(0.75 0.14 85);         /* Warm Yellow */
   --color-error: oklch(0.60 0.20 25);           /* Red */
-  --color-text: oklch(0.25 0.01 260);           /* Charcoal */
-  --color-text-secondary: oklch(0.50 0.02 260); /* Muted text */
-  --color-white: oklch(0.99 0 0);               /* White */
-  --color-surface: oklch(0.98 0.01 85);         /* Card surface */
+  --color-text: oklch(0.22 0.02 60);            /* Dark Brown */
+  --color-text-secondary: oklch(0.48 0.03 60);  /* Muted Brown */
+  --color-white: oklch(0.99 0.005 90);          /* Warm White */
+  --color-surface: oklch(0.97 0.015 88);        /* Warm Card Surface */
 
   /* Typography */
   --font-primary: 'Bricolage Grotesque', system-ui, sans-serif;
@@ -138,6 +139,7 @@ body {
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   box-shadow: var(--shadow-sm);
+  border: 1px solid oklch(0.72 0.16 85 / 0.12);
 }
 
 .surface-card-elevated {
@@ -145,16 +147,37 @@ body {
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   box-shadow: var(--shadow-md);
+  border: 1px solid oklch(0.72 0.16 85 / 0.08);
 }
 
 /* ─── Animations ─── */
 @keyframes pulse-recording {
   0%, 100% {
-    box-shadow: 0 0 0 0 oklch(0.65 0.18 15 / 0.4);
+    box-shadow: 0 0 0 0 oklch(0.68 0.19 55 / 0.4);
   }
   50% {
-    box-shadow: 0 0 0 12px oklch(0.65 0.18 15 / 0);
+    box-shadow: 0 0 0 12px oklch(0.68 0.19 55 / 0);
   }
+}
+
+/* ─── Duck Decorations ─── */
+@keyframes duck-waddle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes duck-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.duck-waddle {
+  animation: duck-waddle 1s ease-in-out infinite;
+}
+
+.duck-float {
+  animation: duck-float 2s ease-in-out infinite;
 }
 
 @keyframes fade-in {
@@ -195,4 +218,22 @@ body {
   font-weight: 700 !important;
   font-size: 20px !important;
   color: var(--color-text) !important;
+}
+
+/* ─── Duck Tabbar Top Wave ─── */
+.van-tabbar::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(
+    90deg,
+    oklch(0.72 0.16 85) 0%,
+    oklch(0.68 0.19 55) 50%,
+    oklch(0.72 0.16 85) 100%
+  );
+  opacity: 0.6;
 }

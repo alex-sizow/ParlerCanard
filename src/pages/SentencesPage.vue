@@ -26,7 +26,7 @@ const {
 
 <template>
 <div class="sentences-page">
-  <van-nav-bar title="Practice Sentences" :border="false" />
+  <van-nav-bar title="🦆 Practice Sentences" :border="false" />
 
   <div class="sentences-page__content">
     <DifficultyFilter v-model="sentenceDifficulty" :counts="sentenceCounts" />

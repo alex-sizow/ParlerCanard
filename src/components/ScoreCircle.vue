@@ -5,7 +5,7 @@ import { scoreCssColor, SCORE_THRESHOLDS } from '@/data/constants'
 const props = defineProps<{ score: number; size?: number }>()
 const color = computed(() => scoreCssColor(props.score))
 const label = computed(() =>
-  props.score >= SCORE_THRESHOLDS.excellent ? 'Excellent!' : props.score >= SCORE_THRESHOLDS.good ? 'Good' : 'Keep trying',
+  props.score >= SCORE_THRESHOLDS.excellent ? 'Magnifique! 🦆' : props.score >= SCORE_THRESHOLDS.good ? 'Pas mal!' : 'Keep quacking!',
 )
 </script>
 

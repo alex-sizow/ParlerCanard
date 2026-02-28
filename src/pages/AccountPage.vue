@@ -37,10 +37,10 @@ const unlockedCount = computed(() =>
 const recentScores = computed(() => getAccuracyTrend(5))
 
 const statsCards = computed(() => [
-  { icon: '📝', label: 'Words', value: `${learnedWords.value.length} / ${words.length}` },
+  { icon: '🪶', label: 'Words', value: `${learnedWords.value.length} / ${words.length}` },
   { icon: '💬', label: 'Sentences', value: `${completedSentences.value.length} / ${sentences.length}` },
-  { icon: '🎯', label: 'Attempts', value: String(attempts.value.length) },
-  { icon: '📊', label: 'Avg Score', value: `${getAverageAccuracy()}%` },
+  { icon: '🦆', label: 'Attempts', value: String(attempts.value.length) },
+  { icon: '🎯', label: 'Avg Score', value: `${getAverageAccuracy()}%` },
   { icon: '⭐', label: 'Best Score', value: `${getBestAccuracy()}%` },
   { icon: '🏆', label: 'Achievements', value: `${unlockedCount.value} / ${achievements.length}` },
 ])
@@ -69,7 +69,7 @@ async function handleLogout() {
 
 <template>
 <div class="account-page">
-  <van-nav-bar title="Account" :border="false" />
+  <van-nav-bar title="🦆 Account" :border="false" />
 
   <div class="account-page__content">
     <!-- Profile Card -->

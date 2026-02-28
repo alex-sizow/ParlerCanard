@@ -26,7 +26,7 @@ const {
 
 <template>
 <div class="words-page">
-  <van-nav-bar title="Practice Words" :border="false" />
+  <van-nav-bar title="🦆 Practice Words" :border="false" />
 
   <div class="words-page__content">
     <OnboardingCard />

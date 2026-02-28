@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const cards = computed(() => [
-  { icon: '🔥', value: props.currentStreak, label: 'Current Streak' },
+  { icon: '🦆', value: props.currentStreak, label: 'Current Streak' },
   { icon: '🏆', value: props.bestStreak, label: 'Best Streak' },
 ])
 </script>

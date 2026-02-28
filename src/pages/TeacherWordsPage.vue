@@ -82,7 +82,7 @@ const filterLabels = { all: 'Все', ...difficultyLabels }
 
 <template>
 <div class="teacher-words">
-  <van-nav-bar title="Управление словами" :border="false" />
+  <van-nav-bar title="🦆 Управление словами" :border="false" />
 
   <div v-if="!isTeacher" class="teacher-words__denied">
     <van-empty description="Доступ только для преподавателя" image="error" />

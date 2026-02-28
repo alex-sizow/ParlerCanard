@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const STORAGE_KEY = 'parler-onboarding-dismissed'
+const STORAGE_KEY = 'parlercanard-onboarding-dismissed'
 const isDismissed = ref(localStorage.getItem(STORAGE_KEY) === 'true')
 const steps = [
-  { action: 'Listen', desc: 'to the native pronunciation' },
-  { action: 'Record', desc: 'your own pronunciation' },
-  { action: 'Review', desc: 'your accuracy score' },
-  { action: 'Improve', desc: 'with phoneme feedback' },
+  { action: '👂 Listen', desc: 'to the native pronunciation' },
+  { action: '🎤 Record', desc: 'your own duck... er, French accent' },
+  { action: '🎯 Review', desc: 'your accuracy score' },
+  { action: '🦆 Improve', desc: 'quack by quack!' },
 ]
 
 function dismiss() {
@@ -19,11 +19,11 @@ function dismiss() {
 <template>
 <div v-if="!isDismissed" class="onboarding surface-card-elevated animate-fade-in">
   <div class="onboarding__header">
-    <h3 class="text-h3">Welcome to Parler! 🇫🇷</h3>
+    <h3 class="text-h3">Welcome to ParlerCanard! 🦆</h3>
     <van-icon name="cross" size="20" color="var(--color-text-secondary)" class="onboarding__close" @click="dismiss" />
   </div>
 
-  <p class="text-body onboarding__subtitle">Learn French pronunciation in 4 simple steps:</p>
+  <p class="text-body onboarding__subtitle">Master French pronunciation in 4 simple steps:</p>
 
   <div class="onboarding__steps">
     <div v-for="(step, i) in steps" :key="i" class="onboarding__step">
@@ -32,9 +32,9 @@ function dismiss() {
     </div>
   </div>
 
-  <p class="text-caption onboarding__tip">💡 Tip: Allow microphone access for the best experience</p>
+  <p class="text-caption onboarding__tip">🦆 Tip: Allow microphone access so we can hear you quack!</p>
 
-  <van-button type="primary" round block @click="dismiss">Get Started</van-button>
+  <van-button type="primary" round block @click="dismiss">Let's Quack!</van-button>
 </div>
 </template>
 

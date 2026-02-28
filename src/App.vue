@@ -12,14 +12,14 @@ const showTabbar = computed(() =>
 )
 
 const themeVars = {
-  primaryColor: 'oklch(0.55 0.15 250)',
-  buttonPrimaryBackground: 'oklch(0.55 0.15 250)',
-  buttonPrimaryBorderColor: 'oklch(0.55 0.15 250)',
-  successColor: 'oklch(0.70 0.15 145)',
+  primaryColor: 'oklch(0.72 0.16 85)',
+  buttonPrimaryBackground: 'oklch(0.72 0.16 85)',
+  buttonPrimaryBorderColor: 'oklch(0.72 0.16 85)',
+  successColor: 'oklch(0.52 0.12 165)',
   dangerColor: 'oklch(0.60 0.20 25)',
-  warningColor: 'oklch(0.75 0.12 85)',
-  tabbarItemActiveColor: 'oklch(0.55 0.15 250)',
-  navBarTitleTextColor: 'oklch(0.25 0.01 260)',
+  warningColor: 'oklch(0.75 0.14 85)',
+  tabbarItemActiveColor: 'oklch(0.68 0.19 55)',
+  navBarTitleTextColor: 'oklch(0.22 0.02 60)',
 }
 </script>
 
@@ -30,7 +30,8 @@ const themeVars = {
     </transition>
   </router-view>
 
-  <van-tabbar v-if="showTabbar" v-model="activeTab" route :placeholder="false" :safe-area-inset-bottom="true" :fixed="true">
+  <van-tabbar v-if="showTabbar" v-model="activeTab" route :placeholder="false" :safe-area-inset-bottom="true"
+    :fixed="true">
     <van-tabbar-item name="words" icon="chat-o" to="/words">
       Words
     </van-tabbar-item>
