@@ -6,6 +6,8 @@ import ScoreCircle from './ScoreCircle.vue'
 import PhonemeGrid from './PhonemeGrid.vue'
 import AudioVisualizer from './AudioVisualizer.vue'
 import ScoreBreakdown from './ScoreBreakdown.vue'
+import PlaybackWaveform from './PlaybackWaveform.vue'
+import ReferencePlayer from './ReferencePlayer.vue'
 
 defineProps<{ listenLabel?: string }>()
 
@@ -109,9 +111,7 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
         <p class="text-phonetic sheet__ipa">{{ item.ipa }}</p>
         <p class="text-caption sheet__translation">{{ item.translation }}</p>
 
-        <van-button type="primary" size="small" round icon="volume-o" :loading="isSpeaking" @click="listen">
-          {{ listenLabel ?? 'Listen' }}
-        </van-button>
+        <ReferencePlayer :text="item.text" :is-speaking="isSpeaking" @play="listen" @stop="stopPlayback" />
 
         <slot name="extra" />
 
@@ -131,11 +131,8 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
           <div v-if="transcript || recordedBlob" class="sheet__transcript surface-card">
             <p v-if="transcript" class="text-caption">You said:</p>
             <p v-if="transcript" class="text-body">{{ transcript }}</p>
-            <van-button v-if="recordedBlob" type="primary" plain size="small" round
-              :icon="isPlaying ? 'pause-circle-o' : 'play-circle-o'" style="margin-top: 8px;"
-              @click="isPlaying ? stopPlayback() : playRecording()">
-              {{ isPlaying ? 'Stop' : 'Play My Recording' }}
-            </van-button>
+            <PlaybackWaveform v-if="recordedBlob" :blob="recordedBlob" :is-playing="isPlaying" @play="playRecording"
+              @stop="stopPlayback" />
           </div>
         </transition>
 
