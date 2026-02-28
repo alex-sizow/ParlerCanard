@@ -4,21 +4,30 @@ import { ref, watch, onBeforeUnmount } from 'vue'
 const props = defineProps<{
   isActive: boolean
   stream?: MediaStream | null
+  analyser?: AnalyserNode | null
 }>()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 let animationId: number | null = null
-let analyser: AnalyserNode | null = null
-let audioContext: AudioContext | null = null
+let localAnalyser: AnalyserNode | null = null
+let localAudioContext: AudioContext | null = null
 
 function startVisualization() {
-  if (!props.stream || !canvasRef.value) return
+  if (!canvasRef.value) return
 
-  audioContext = new AudioContext()
-  analyser = audioContext.createAnalyser()
-  analyser.fftSize = 256
-  audioContext.createMediaStreamSource(props.stream).connect(analyser)
+  // Prefer shared analyser from useRecording, fallback to creating local one
+  if (props.analyser) {
+    localAnalyser = props.analyser
+  } else if (props.stream) {
+    localAudioContext = new AudioContext()
+    localAnalyser = localAudioContext.createAnalyser()
+    localAnalyser.fftSize = 256
+    localAudioContext.createMediaStreamSource(props.stream).connect(localAnalyser)
+  } else {
+    return
+  }
 
+  const analyserNode = localAnalyser
   const canvas = canvasRef.value
   const ctx = canvas.getContext('2d')
   if (!ctx) return
@@ -26,13 +35,13 @@ function startVisualization() {
   const style = getComputedStyle(canvas)
   const bg = style.getPropertyValue('--color-surface').trim() || '#f8f6f0'
   const fg = style.getPropertyValue('--color-primary').trim() || 'oklch(0.55 0.15 250)'
-  const data = new Uint8Array(analyser.frequencyBinCount)
+  const data = new Uint8Array(analyserNode.frequencyBinCount)
   const slice = canvas.width / data.length
 
   function draw() {
-    if (!analyser || !ctx) return
+    if (!analyserNode || !ctx) return
     animationId = requestAnimationFrame(draw)
-    analyser.getByteTimeDomainData(data)
+    analyserNode.getByteTimeDomainData(data)
 
     ctx.fillStyle = bg
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -52,8 +61,9 @@ function startVisualization() {
 
 function stopVisualization() {
   if (animationId) { cancelAnimationFrame(animationId); animationId = null }
-  if (audioContext) { audioContext.close(); audioContext = null }
-  analyser = null
+  // Only close the AudioContext we created locally
+  if (localAudioContext) { localAudioContext.close(); localAudioContext = null }
+  localAnalyser = null
 }
 
 watch(() => props.isActive, active => active ? startVisualization() : stopVisualization())

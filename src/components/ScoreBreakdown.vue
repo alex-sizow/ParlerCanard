@@ -1,0 +1,86 @@
+<script setup lang="ts">
+defineProps<{
+  accuracy: number
+  confidence: number
+  intonation: number
+  fluency: number
+}>()
+
+const items = [
+  { key: 'accuracy', label: 'Accuracy', icon: '🎯', weight: '40%' },
+  { key: 'confidence', label: 'Clarity', icon: '🔊', weight: '30%' },
+  { key: 'intonation', label: 'Intonation', icon: '🎵', weight: '20%' },
+  { key: 'fluency', label: 'Fluency', icon: '💨', weight: '10%' },
+] as const
+
+function barColor(value: number): string {
+  if (value >= 85) return 'var(--color-success)'
+  if (value >= 70) return 'var(--color-warning)'
+  return 'var(--color-error)'
+}
+</script>
+
+<template>
+<div class="score-breakdown surface-card">
+  <div v-for="item in items" :key="item.key" class="score-breakdown__row">
+    <span class="score-breakdown__icon">{{ item.icon }}</span>
+    <span class="score-breakdown__label text-caption">{{ item.label }}</span>
+    <div class="score-breakdown__bar-track">
+      <div class="score-breakdown__bar-fill" :style="{
+        width: `${$props[item.key]}%`,
+        backgroundColor: barColor($props[item.key]),
+      }" />
+    </div>
+    <span class="score-breakdown__value text-caption">{{ $props[item.key] }}%</span>
+  </div>
+</div>
+</template>
+
+<style scoped>
+.score-breakdown {
+  width: 100%;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.score-breakdown__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.score-breakdown__icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+.score-breakdown__label {
+  width: 72px;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.score-breakdown__bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--color-lavender-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.score-breakdown__bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease-out;
+}
+
+.score-breakdown__value {
+  width: 36px;
+  text-align: right;
+  font-weight: 600;
+  font-family: var(--font-phonetic);
+}
+</style>

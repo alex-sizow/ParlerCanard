@@ -14,10 +14,12 @@ const { markWordLearned, isWordLearned } = useProgress()
 
 const {
   activeItem, showPractice, score, wordResults,
+  accuracyScore, confidenceScore, intonationScore, fluencyScore,
   selectItem, closePractice, listenTo, handleRecord,
   isRecording, isProcessing, transcript, isSupported,
-  recordedBlob, mediaStream, isPlaying, isSpeaking,
+  recordedBlob, mediaStream, analyserNode, isPlaying, isSpeaking,
   playRecording, stopPlayback,
+  isModelLoading, modelLoadProgress,
 } = usePracticeSession<Word>({
   itemType: 'word',
   markCompleted: markWordLearned,
@@ -47,10 +49,12 @@ const {
   </div>
 
   <PracticePopup v-model:show="showPractice" :item="activeItem" :score="score" :word-results="wordResults"
-    :is-recording="isRecording" :is-processing="isProcessing" :is-supported="isSupported" :recorded-blob="recordedBlob"
-    :media-stream="mediaStream" :transcript="transcript" :is-playing="isPlaying" :is-speaking="isSpeaking"
-    @close="closePractice" @listen="activeItem && listenTo(activeItem.text)" @record="handleRecord"
-    @play-recording="playRecording" @stop-playback="stopPlayback" />
+    :accuracy-score="accuracyScore" :confidence-score="confidenceScore" :intonation-score="intonationScore"
+    :fluency-score="fluencyScore" :is-recording="isRecording" :is-processing="isProcessing" :is-supported="isSupported"
+    :recorded-blob="recordedBlob" :media-stream="mediaStream" :analyser-node="analyserNode" :transcript="transcript"
+    :is-playing="isPlaying" :is-speaking="isSpeaking" :is-model-loading="isModelLoading"
+    :model-load-progress="modelLoadProgress" @close="closePractice" @listen="activeItem && listenTo(activeItem.text)"
+    @record="handleRecord" @play-recording="playRecording" @stop-playback="stopPlayback" />
 </div>
 </template>
 

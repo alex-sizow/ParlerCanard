@@ -22,6 +22,7 @@ declare module 'vue' {
     RecordButton: typeof import('./src/components/RecordButton.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScoreBreakdown: typeof import('./src/components/ScoreBreakdown.vue')['default']
     ScoreCircle: typeof import('./src/components/ScoreCircle.vue')['default']
     StatsGrid: typeof import('./src/components/StatsGrid.vue')['default']
     StreakCard: typeof import('./src/components/StreakCard.vue')['default']

@@ -11,11 +11,13 @@ import StreakCard from '@/components/StreakCard.vue'
 import StatsGrid from '@/components/StatsGrid.vue'
 import { scoreCssColor } from '@/data/constants'
 import { showDialog } from 'vant'
+import { usePwa } from '@/composables/usePwa'
 
 const router = useRouter()
 const { currentUser, isTeacher, allUsers, logout } = useAuth()
 const { learnedWords, completedSentences, attempts, getAverageAccuracy, getBestAccuracy, getAccuracyTrend } = useProgress()
 const { streakDays, bestStreak, isUnlocked } = useAchievements()
+const { canInstall, isInstalled, install } = usePwa()
 
 const memberSince = computed(() => {
   if (!currentUser.value) return ''
@@ -140,6 +142,24 @@ async function handleLogout() {
       </div>
     </div>
 
+    <!-- Install PWA -->
+    <div v-if="canInstall" class="pwa-install surface-card-elevated">
+      <div class="pwa-install__icon">📲</div>
+      <div class="pwa-install__info">
+        <h3 class="text-h3" style="margin: 0;">Install App</h3>
+        <p class="text-caption" style="margin: 4px 0 0;">
+          Install ParlerCanard for offline use. The speech model will be cached automatically.
+        </p>
+      </div>
+      <van-button type="primary" round size="small" @click="install">
+        Install
+      </van-button>
+    </div>
+    <div v-else-if="isInstalled" class="pwa-installed surface-card">
+      <span>✅</span>
+      <span class="text-caption">App installed — works offline!</span>
+    </div>
+
     <!-- Logout -->
     <van-button type="default" block round size="large" class="account-page__logout" @click="handleLogout">
       Log Out
@@ -251,5 +271,29 @@ async function handleLogout() {
   margin-top: var(--space-md);
   color: var(--color-error);
   border-color: var(--color-error);
+}
+
+.pwa-install {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  border: 2px dashed oklch(0.72 0.16 85 / 0.5);
+}
+
+.pwa-install__icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.pwa-install__info {
+  flex: 1;
+}
+
+.pwa-installed {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  opacity: 0.7;
 }
 </style>

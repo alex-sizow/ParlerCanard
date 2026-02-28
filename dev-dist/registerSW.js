@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/ParlerCanard/dev-sw.js?dev-sw', { scope: '/ParlerCanard/', type: 'classic' })

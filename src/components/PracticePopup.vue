@@ -5,20 +5,28 @@ import RecordButton from './RecordButton.vue'
 import ScoreCircle from './ScoreCircle.vue'
 import PhonemeGrid from './PhonemeGrid.vue'
 import AudioVisualizer from './AudioVisualizer.vue'
+import ScoreBreakdown from './ScoreBreakdown.vue'
 
 defineProps<{
   show: boolean
   item: PracticeItem | null
   score: number | null
   wordResults: WordResult[]
+  accuracyScore: number | null
+  confidenceScore: number | null
+  intonationScore: number | null
+  fluencyScore: number | null
   isRecording: boolean
   isProcessing: boolean
   isSupported: boolean
   recordedBlob: Blob | null
   mediaStream: MediaStream | null
+  analyserNode: AnalyserNode | null
   transcript: string
   isPlaying: boolean
   isSpeaking: boolean
+  isModelLoading?: boolean
+  modelLoadProgress?: number
   listenLabel?: string
   maxHeight?: string
 }>()
@@ -47,7 +55,13 @@ const emit = defineEmits<{
     <slot name="extra" />
 
     <div class="practice-popup__recorder">
-      <AudioVisualizer :is-active="isRecording" :stream="mediaStream" />
+      <AudioVisualizer :is-active="isRecording" :stream="mediaStream" :analyser="analyserNode" />
+
+      <div v-if="isModelLoading" class="practice-popup__model-loading surface-card">
+        <p class="text-caption">Loading speech model (first time only)...</p>
+        <van-progress :percentage="modelLoadProgress ?? 0" stroke-width="6" color="var(--color-primary)" />
+      </div>
+
       <RecordButton :is-recording="isRecording" :is-processing="isProcessing" :disabled="!isSupported"
         @press="emit('record')" />
     </div>
@@ -64,6 +78,8 @@ const emit = defineEmits<{
 
     <div v-if="score !== null" class="practice-popup__results animate-fade-in">
       <ScoreCircle :score="score" />
+      <ScoreBreakdown v-if="accuracyScore !== null" :accuracy="accuracyScore!" :confidence="confidenceScore!"
+        :intonation="intonationScore!" :fluency="fluencyScore!" />
       <PhonemeGrid v-if="wordResults.length > 0" :results="wordResults" />
     </div>
   </div>
@@ -101,6 +117,14 @@ const emit = defineEmits<{
   gap: var(--space-md);
   width: 100%;
   margin-top: var(--space-sm);
+}
+
+.practice-popup__model-loading {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
 .practice-popup__transcript {

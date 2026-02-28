@@ -13,10 +13,12 @@ const { markSentenceCompleted, isSentenceCompleted } = useProgress()
 
 const {
   activeItem, showPractice, score, wordResults,
+  accuracyScore, confidenceScore, intonationScore, fluencyScore,
   selectItem, closePractice, listenTo, handleRecord,
   isRecording, isProcessing, transcript, isSupported,
-  recordedBlob, mediaStream, isPlaying, isSpeaking,
+  recordedBlob, mediaStream, analyserNode, isPlaying, isSpeaking,
   playRecording, stopPlayback,
+  isModelLoading, modelLoadProgress,
 } = usePracticeSession<Sentence>({
   itemType: 'sentence',
   markCompleted: markSentenceCompleted,
@@ -67,11 +69,13 @@ const {
   </div>
 
   <PracticePopup v-model:show="showPractice" :item="activeItem" :score="score" :word-results="wordResults"
-    :is-recording="isRecording" :is-processing="isProcessing" :is-supported="isSupported" :recorded-blob="recordedBlob"
-    :media-stream="mediaStream" :transcript="transcript" :is-playing="isPlaying" :is-speaking="isSpeaking"
-    listen-label="Listen Full Sentence" max-height="90vh" @close="closePractice"
-    @listen="activeItem && listenTo(activeItem.text)" @record="handleRecord" @play-recording="playRecording"
-    @stop-playback="stopPlayback">
+    :accuracy-score="accuracyScore" :confidence-score="confidenceScore" :intonation-score="intonationScore"
+    :fluency-score="fluencyScore" :is-recording="isRecording" :is-processing="isProcessing" :is-supported="isSupported"
+    :recorded-blob="recordedBlob" :media-stream="mediaStream" :analyser-node="analyserNode" :transcript="transcript"
+    :is-playing="isPlaying" :is-speaking="isSpeaking" :is-model-loading="isModelLoading"
+    :model-load-progress="modelLoadProgress" listen-label="Listen Full Sentence" max-height="90vh"
+    @close="closePractice" @listen="activeItem && listenTo(activeItem.text)" @record="handleRecord"
+    @play-recording="playRecording" @stop-playback="stopPlayback">
     <template v-if="activeItem" #extra>
       <div class="phrases-section">
         <h4 class="text-caption" style="margin: 0;">Phrase Breakdown:</h4>
