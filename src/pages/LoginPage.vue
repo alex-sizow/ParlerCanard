@@ -1,14 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { useTelegram } from '@/composables/useTelegram'
 import { showToast } from 'vant'
 
 const router = useRouter()
-const { allUsers, register, loginAs } = useAuth()
+const { allUsers, register, registerFromTelegram, loginAs } = useAuth()
+const { isTelegramEnv, telegramUser, displayName: tgDisplayName } = useTelegram()
 
 const studentName = ref('')
 const showExisting = ref(false)
+const telegramLoading = ref(false)
+
+onMounted(() => {
+  if (isTelegramEnv.value && telegramUser.value) {
+    telegramLoading.value = true
+    const user = registerFromTelegram(telegramUser.value)
+    showToast({ message: `Welcome, ${user.name}! 🦆`, type: 'success' })
+    router.replace('/words')
+  }
+})
 
 function handleRegister() {
   const name = studentName.value.trim()
@@ -32,57 +44,73 @@ function handleLoginAs(userId: string) {
 
 <template>
 <div class="login-page">
-  <div class="login-page__hero">
+  <!-- Telegram auto-login spinner -->
+  <div v-if="telegramLoading" class="login-page__tg-loading">
     <div class="login-page__logo duck-float">🦆</div>
-    <h1 class="login-page__title">ParlerCanard</h1>
-    <p class="login-page__subtitle">
-      Master French pronunciation
-    </p>
+    <van-loading size="24px" color="var(--color-primary)">Logging in via Telegram...</van-loading>
   </div>
 
-  <div class="login-page__form surface-card-elevated">
-    <h3 class="login-page__form-title">Get Started</h3>
-    <p class="text-caption" style="margin: 0 0 12px;">Enter your name to begin</p>
-
-    <van-field v-model="studentName" placeholder="Your name" size="large" clearable :border="false"
-      class="login-page__input" @keyup.enter="handleRegister" />
-
-    <van-button type="primary" block round size="large" :disabled="!studentName.trim()" @click="handleRegister">
-      Start Practicing
-    </van-button>
-  </div>
-
-  <!-- Teacher Login -->
-  <div class="login-page__teacher surface-card">
-    <div class="login-page__teacher-header" @click="showExisting = !showExisting">
-      <span>👩‍🏫</span>
-      <div>
-        <p class="login-page__teacher-name">Светлана</p>
-        <p class="text-caption" style="margin: 0;">Teacher access</p>
-      </div>
-      <van-icon :name="showExisting ? 'arrow-up' : 'arrow-down'" size="14" />
+  <template v-else>
+    <div class="login-page__hero">
+      <div class="login-page__logo duck-float">🦆</div>
+      <h1 class="login-page__title">ParlerCanard</h1>
+      <p class="login-page__subtitle">
+        Master French pronunciation
+      </p>
     </div>
 
-    <van-button type="default" block round size="small" style="margin-top: 10px;"
-      @click="handleLoginAs('teacher-svetlana')">
-      Sign in as Teacher
-    </van-button>
-  </div>
-
-  <!-- Existing Users -->
-  <div v-if="showExisting && allUsers.length > 1" class="login-page__existing surface-card">
-    <p class="section-label">Existing accounts</p>
-    <div v-for="user in allUsers" :key="user.id" class="login-page__user-row" @click="handleLoginAs(user.id)">
-      <span class="login-page__user-avatar">{{ user.avatar }}</span>
-      <div class="login-page__user-info">
-        <span class="login-page__user-name">{{ user.name }}</span>
-        <van-tag :type="user.role === 'teacher' ? 'warning' : 'primary'" round size="medium">
-          {{ user.role }}
-        </van-tag>
-      </div>
-      <van-icon name="arrow" size="14" color="var(--color-lavender)" />
+    <!-- Telegram hint (when opened in TG but user data didn't load) -->
+    <div v-if="isTelegramEnv && !telegramUser" class="login-page__tg-hint surface-card">
+      <span>📱</span>
+      <p class="text-caption" style="margin: 0;">
+        Telegram detected but user data unavailable. Sign in manually below.
+      </p>
     </div>
-  </div>
+
+    <div class="login-page__form surface-card-elevated">
+      <h3 class="login-page__form-title">Get Started</h3>
+      <p class="text-caption" style="margin: 0 0 12px;">Enter your name to begin</p>
+
+      <van-field v-model="studentName" placeholder="Your name" size="large" clearable :border="false"
+        class="login-page__input" @keyup.enter="handleRegister" />
+
+      <van-button type="primary" block round size="large" :disabled="!studentName.trim()" @click="handleRegister">
+        Start Practicing
+      </van-button>
+    </div>
+
+    <!-- Teacher Login -->
+    <div class="login-page__teacher surface-card">
+      <div class="login-page__teacher-header" @click="showExisting = !showExisting">
+        <span>👩‍🏫</span>
+        <div>
+          <p class="login-page__teacher-name">Светлана</p>
+          <p class="text-caption" style="margin: 0;">Teacher access</p>
+        </div>
+        <van-icon :name="showExisting ? 'arrow-up' : 'arrow-down'" size="14" />
+      </div>
+
+      <van-button type="default" block round size="small" style="margin-top: 10px;"
+        @click="handleLoginAs('teacher-svetlana')">
+        Sign in as Teacher
+      </van-button>
+    </div>
+
+    <!-- Existing Users -->
+    <div v-if="showExisting && allUsers.length > 1" class="login-page__existing surface-card">
+      <p class="section-label">Existing accounts</p>
+      <div v-for="user in allUsers" :key="user.id" class="login-page__user-row" @click="handleLoginAs(user.id)">
+        <span class="login-page__user-avatar">{{ user.avatar }}</span>
+        <div class="login-page__user-info">
+          <span class="login-page__user-name">{{ user.name }}</span>
+          <van-tag :type="user.role === 'teacher' ? 'warning' : 'primary'" round size="medium">
+            {{ user.role }}
+          </van-tag>
+        </div>
+        <van-icon name="arrow" size="14" color="var(--color-lavender)" />
+      </div>
+    </div>
+  </template>
 </div>
 </template>
 
@@ -196,5 +224,22 @@ function handleLoginAs(userId: string) {
 .login-page__user-name {
   font-size: 14px;
   font-weight: 500;
+}
+
+.login-page__tg-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  min-height: 60dvh;
+}
+
+.login-page__tg-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px dashed var(--color-lavender);
 }
 </style>

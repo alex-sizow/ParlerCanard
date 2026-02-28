@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { useTelegram } from '@/composables/useTelegram'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,7 +56,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  const { isAuthenticated, isTeacher } = useAuth()
+  const { isAuthenticated, isTeacher, registerFromTelegram } = useAuth()
+  const { isTelegramEnv, telegramUser } = useTelegram()
+
+  // Auto-login from Telegram if not yet authenticated
+  if (!isAuthenticated.value && isTelegramEnv.value && telegramUser.value) {
+    registerFromTelegram(telegramUser.value)
+  }
 
   if (!to.meta.public && !isAuthenticated.value) {
     return { name: 'login' }

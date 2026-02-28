@@ -19,6 +19,8 @@ const { learnedWords, completedSentences, attempts, getAverageAccuracy, getBestA
 const { streakDays, bestStreak, isUnlocked } = useAchievements()
 const { canInstall, isInstalled, install } = usePwa()
 
+const isTelegramUser = computed(() => !!currentUser.value?.telegramId)
+
 const memberSince = computed(() => {
   if (!currentUser.value) return ''
   const d = new Date(currentUser.value.joinedAt)
@@ -77,8 +79,16 @@ async function handleLogout() {
   <div class="account-page__content">
     <!-- Profile Card -->
     <div class="profile-card surface-card-elevated">
-      <div class="profile-card__avatar">
-        {{ currentUser?.avatar ?? '👤' }}
+      <div class="profile-card__avatar-wrap">
+        <img
+          v-if="currentUser?.telegramPhotoUrl"
+          :src="currentUser.telegramPhotoUrl"
+          :alt="currentUser.name"
+          class="profile-card__photo"
+        />
+        <span v-else class="profile-card__avatar">
+          {{ currentUser?.avatar ?? '👤' }}
+        </span>
       </div>
       <div class="profile-card__info">
         <h2 class="profile-card__name">{{ currentUser?.name }}</h2>
@@ -86,8 +96,14 @@ async function handleLogout() {
           <van-tag :type="isTeacher ? 'warning' : 'primary'" round size="medium">
             {{ isTeacher ? 'Teacher' : 'Student' }}
           </van-tag>
+          <van-tag v-if="isTelegramUser" color="#229ED9" round size="medium" text-color="#fff">
+            ✈ Telegram
+          </van-tag>
           <span class="text-caption">Since {{ memberSince }}</span>
         </div>
+        <p v-if="currentUser?.telegramUsername" class="profile-card__tg-username text-caption">
+          @{{ currentUser.telegramUsername }}
+        </p>
       </div>
     </div>
 
@@ -183,9 +199,21 @@ async function handleLogout() {
   padding: var(--space-md);
 }
 
+.profile-card__avatar-wrap {
+  flex-shrink: 0;
+}
+
 .profile-card__avatar {
   font-size: 40px;
   line-height: 1;
+}
+
+.profile-card__photo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-lavender-light);
 }
 
 .profile-card__info {
@@ -197,6 +225,11 @@ async function handleLogout() {
   font-size: 18px;
   font-weight: 600;
   line-height: 1.3;
+}
+
+.profile-card__tg-username {
+  margin: 4px 0 0;
+  color: #229ED9;
 }
 
 .profile-card__meta {

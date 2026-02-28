@@ -1,5 +1,6 @@
 import { computed } from 'vue'
 import { usePersistence } from './usePersistence'
+import type { TelegramUser } from './useTelegram'
 
 export type UserRole = 'student' | 'teacher'
 
@@ -9,6 +10,9 @@ export interface User {
   role: UserRole
   avatar: string
   joinedAt: string
+  telegramId?: number
+  telegramUsername?: string
+  telegramPhotoUrl?: string
 }
 
 interface AuthState {
@@ -51,6 +55,42 @@ export function useAuth () {
     return user
   }
 
+  /**
+   * Register or login a user from Telegram Mini App data.
+   * Uses telegramId as the stable identity key.
+   */
+  function registerFromTelegram (tgUser: TelegramUser): User {
+    const tgId = tgUser.id
+    const displayName = tgUser.last_name
+      ? `${tgUser.first_name} ${tgUser.last_name}`
+      : tgUser.first_name
+
+    // Find by telegramId first (stable)
+    const existing = state.users.find(u => u.telegramId === tgId)
+    if (existing) {
+      // Update name / photo on every login (user may have changed TG profile)
+      existing.name = displayName
+      existing.telegramUsername = tgUser.username
+      existing.telegramPhotoUrl = tgUser.photo_url
+      state.currentUser = existing
+      return existing
+    }
+
+    const user: User = {
+      id: `tg-${tgId}`,
+      name: displayName,
+      role: 'student',
+      avatar: '🧑‍🎓',
+      joinedAt: new Date().toISOString().split('T')[0]!,
+      telegramId: tgId,
+      telegramUsername: tgUser.username,
+      telegramPhotoUrl: tgUser.photo_url,
+    }
+    state.users.push(user)
+    state.currentUser = user
+    return user
+  }
+
   function loginAs (userId: string) {
     const user = state.users.find(u => u.id === userId)
     if (user) { state.currentUser = user; return true }
@@ -66,6 +106,7 @@ export function useAuth () {
     isTeacher,
     allUsers,
     register,
+    registerFromTelegram,
     loginAs,
     loginAsTeacher,
     logout,
